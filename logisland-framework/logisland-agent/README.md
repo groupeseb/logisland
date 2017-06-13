@@ -28,6 +28,10 @@ swagger-codegen generate --group-id com.hurence.logisland  --artifact-id logisla
 ```
 
 ## How to start and debug the agent inside your IDE ?
+### Prerequisites for all IDE
+start kafka and zookeeper  
+sudo docker run -p 2181:2181 -p 9092:9092 --env ADVERTISED_HOST=localhost --env ADVERTISED_PORT=9092 spotify/kafka
+
 ### Eclipse
 Note that the following steps are required only the first time you start the agent:
 
