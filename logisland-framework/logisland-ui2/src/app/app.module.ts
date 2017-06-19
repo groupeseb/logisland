@@ -6,6 +6,7 @@ import { PageNotFoundComponent } from './app-page-not-found.component';
 
 import { Router, RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
+import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome'
 import 'hammerjs';
 import { NgModule } from '@angular/core';
 import { MdButtonModule, MdCardModule, MdIconModule, MdMenuModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
@@ -31,6 +32,7 @@ const appRoutes: Routes = [
     PageNotFoundComponent,
   ],
   imports: [
+    Angular2FontawesomeModule,
     BrowserModule,
     MdButtonModule,
     MdCardModule,
