@@ -1,15 +1,26 @@
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app.routing.module';
 import { HomeComponent } from '../home/home.component';
 import { LeftbarComponent } from '../nav/leftbar.component';
 import { TopicListComponent } from '../topic/list/topiclist.component';
 import { PageNotFoundComponent } from './app-page-not-found.component';
 
-import { Router } from '@angular/router';
+import { Router, RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import 'hammerjs';
 import { NgModule } from '@angular/core';
 import { MdButtonModule, MdCardModule, MdIconModule, MdMenuModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
+
+const appRoutes: Routes = [
+  {
+    path: '',
+    component: HomeComponent
+  },
+  {
+    path: 'topic',
+    component: TopicListComponent
+  },
+  { path: '**', component: PageNotFoundComponent }
+];
 
 @NgModule({
   declarations: [
@@ -20,7 +31,6 @@ import { MdButtonModule, MdCardModule, MdIconModule, MdMenuModule, MdSidenavModu
     PageNotFoundComponent,
   ],
   imports: [
-    AppRoutingModule,
     BrowserModule,
     MdButtonModule,
     MdCardModule,
@@ -28,6 +38,9 @@ import { MdButtonModule, MdCardModule, MdIconModule, MdMenuModule, MdSidenavModu
     MdMenuModule,
     MdSidenavModule,
     MdToolbarModule,
+    RouterModule.forRoot(
+      appRoutes
+    )
   ],
   providers: [],
   bootstrap: [AppComponent]
