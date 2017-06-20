@@ -3,9 +3,11 @@ import { Topic } from './topic';
 
 @Component({
   selector: 'li-topic-list',
-  template: `<ul><li template="ngFor let topic of topics" [class.odd]="odd">
-                <a [routerLink]="['/topic/detail', topic.id]">{{topic.id}} {{topic.description}}</a>
-             </li></ul>`
+  template: `<md-nav-list>
+                <a *ngFor="let topic of topics" md-list-item [routerLink]="['/topic/detail', topic.id]">
+                  {{topic.id}} {{topic.description}}
+                </a>
+             </md-nav-list>`
 })
 
 export class TopicListPage {

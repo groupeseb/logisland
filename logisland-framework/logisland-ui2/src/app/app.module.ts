@@ -10,7 +10,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome'
 import 'hammerjs';
 import { NgModule } from '@angular/core';
-import { MdButtonModule, MdCardModule, MdIconModule, MdMenuModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
+import { MdButtonModule,
+         MdCardModule,
+         MdIconModule,
+         MdListModule,
+         MdMenuModule,
+         MdSidenavModule,
+         MdToolbarModule
+        } from '@angular/material';
 
 const appRoutes: Routes = [
   { path: '', component: HomePage },
@@ -34,6 +41,7 @@ const appRoutes: Routes = [
     MdButtonModule,
     MdCardModule,
     MdIconModule,
+    MdListModule,
     MdMenuModule,
     MdSidenavModule,
     MdToolbarModule,
