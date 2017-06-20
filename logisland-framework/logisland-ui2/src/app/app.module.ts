@@ -1,8 +1,9 @@
 import { AppComponent } from './app.component';
-import { HomeComponent } from '../home/home.component';
+import { HomePage } from '../home/home-page';
 import { LeftbarComponent } from '../nav/leftbar.component';
-import { TopicListComponent } from '../topic/list/topiclist.component';
-import { PageNotFoundComponent } from './app-page-not-found.component';
+import { TopicListPage } from '../topic/topic-list-page';
+import { TopicDetailPage } from '../topic/topic-detail-page';
+import { PageNotFound } from './page-not-found';
 
 import { Router, RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
@@ -12,24 +13,20 @@ import { NgModule } from '@angular/core';
 import { MdButtonModule, MdCardModule, MdIconModule, MdMenuModule, MdSidenavModule, MdToolbarModule } from '@angular/material';
 
 const appRoutes: Routes = [
-  {
-    path: '',
-    component: HomeComponent
-  },
-  {
-    path: 'topic',
-    component: TopicListComponent
-  },
-  { path: '**', component: PageNotFoundComponent }
+  { path: '', component: HomePage },
+  { path: 'topic', component: TopicListPage },
+  { path: 'topic/detail/:id', component: TopicDetailPage },
+  { path: '**', component: PageNotFound }
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
     LeftbarComponent,
-    HomeComponent,
-    TopicListComponent,
-    PageNotFoundComponent,
+    HomePage,
+    TopicListPage,
+    TopicDetailPage,
+    PageNotFound,
   ],
   imports: [
     Angular2FontawesomeModule,

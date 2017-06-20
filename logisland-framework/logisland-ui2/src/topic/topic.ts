@@ -1,4 +1,4 @@
 export class Topic {
-    id: string;
-    description: string;
+    public id: string;
+    public description: string;
 }
