@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Hurence (bailet.thomas@gmail.com)
+ * Copyright (C) 2016 Hurence (support@hurence.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 @Tags({"JSON", "evaluate", "JsonPath"})
-@CapabilityDescription("Evaluates one or more JsonPath expressions against the content of a FlowFile. "
+@CapabilityDescription("Evaluates one or more JsonPath expressions against the content of a Record. "
         + "The results of those expressions are assigned to Records Fields "
         + "depending on configuration of the Processor. "
         + "JsonPaths are entered by adding user-defined properties; the name of the property maps to the Field Name "
