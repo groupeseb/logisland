@@ -1,8 +1,9 @@
 import { AppComponent } from './app.component';
-import { HomePage } from '../home/home-page';
-import { LeftbarComponent } from '../nav/leftbar.component';
-import { TopicListPage } from '../topic/topic-list-page';
-import { TopicDetailPage } from '../topic/topic-detail-page';
+import { HomePage } from './home-page';
+import { LeftbarComponent } from './leftbar.component';
+import { TopicService } from './topic/topic-service';
+import { TopicListPage } from './topic/topic-list-page';
+import { TopicDetailPage } from './topic/topic-detail-page';
 import { PageNotFound } from './page-not-found';
 
 import { Router, RouterModule, Routes } from '@angular/router';
@@ -18,6 +19,14 @@ import { MdButtonModule,
          MdSidenavModule,
          MdToolbarModule
         } from '@angular/material';
+import { RestangularModule, Restangular } from 'ngx-restangular';
+
+// Function for setting the default restangular configuration
+export function RestangularConfigFactory (RestangularProvider) {
+  // set the baseUrl of the agent
+  RestangularProvider.setBaseUrl('http://localhost:8081/');
+//  RestangularProvider.setDefaultHeaders({'Authorization': 'Bearer UDXPx-Xko0w4BRKajozCVy20X11MRZs1'});
+}
 
 const appRoutes: Routes = [
   { path: '', component: HomePage },
@@ -45,11 +54,13 @@ const appRoutes: Routes = [
     MdMenuModule,
     MdSidenavModule,
     MdToolbarModule,
+    // Importing RestangularModule and making default configs for restanglar
+    RestangularModule.forRoot(RestangularConfigFactory),
     RouterModule.forRoot(
       appRoutes
     )
   ],
-  providers: [],
+  providers: [ TopicService ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
