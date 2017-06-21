@@ -1,11 +1,6 @@
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { Injectable, Inject } from '@angular/core';
-
-export class SearchCriteria {
-    readonly keyword: string;
-    readonly pageIndex: number;
-    readonly pageSize: number;
-}
+import { SearchCriteria } from './search-criteria';
 
 @Injectable()
 export class CrudService<T> {

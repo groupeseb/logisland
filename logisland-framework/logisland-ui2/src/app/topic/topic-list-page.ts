@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SearchCriteria } from '../search-criteria';
 import { Topic } from './topic';
 import { TopicService } from './topic-service';
 import { RestangularModule, Restangular } from 'ngx-restangular';
@@ -20,6 +21,7 @@ export class TopicListPage {
 
   constructor(private topicService: TopicService) {
     this.topics = [];
+    const tt = this.topicService.search(new SearchCriteria(null, 0));
     for (let i = 0; i < 10; i++) {
       const newTopic = new Topic();
       newTopic.id = i.toString();
