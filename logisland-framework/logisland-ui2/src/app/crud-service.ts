@@ -1,33 +1,18 @@
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { Injectable, Inject } from '@angular/core';
 import { SearchCriteria } from './search-criteria';
+import { Http, Response, URLSearchParams } from '@angular/http';
+import { Observable } from 'rxjs/Rx'
+import { RequestMethod } from '@angular/http';
+import {ResourceCRUD, ResourceParams} from 'ngx-resource';
+
+interface QueryInput {
+    pageIndex?: number;
+    pageSize?: number;
+}
 
 @Injectable()
-export class CrudService<T> {
-    readonly entityName: string;
-
-    constructor(@Inject(Restangular) private restangular, entityName: string) {
-        console.log('CrudRestService init - entityName: ' + entityName);
-        this.entityName = entityName;
-    }
-
-    get(id: string): T {
-        return null;
-    }
-
-    delete(id: string) {
-
-    }
-
-    insert(t: T) {
-
-    }
-
-    update(t: T) {
-
-    }
-
-    search(search: SearchCriteria): T[] {
-        return this.restangular.all(this.entityName).getList();
-    }
-}
+@ResourceParams({
+  url: 'http://localhost:8081/'
+})
+export class CrudService<T> extends ResourceCRUD<QueryInput, T, T> {}

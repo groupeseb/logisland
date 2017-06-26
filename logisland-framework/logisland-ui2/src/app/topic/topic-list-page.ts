@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { SearchCriteria } from '../search-criteria';
 import { Topic } from './topic';
 import { TopicService } from './topic-service';
-import { RestangularModule, Restangular } from 'ngx-restangular';
 
 @Component({
   selector: 'li-topic-list',
@@ -21,12 +20,9 @@ export class TopicListPage {
 
   constructor(private topicService: TopicService) {
     this.topics = [];
-    const tt = this.topicService.search(new SearchCriteria(null, 0));
-    for (let i = 0; i < 10; i++) {
-      const newTopic = new Topic();
-      newTopic.id = i.toString();
-      newTopic.description = 'description ' + i.toString();
-      this.topics.push(newTopic);
-    }
+    const tt: Topic[] = this.topicService.query({});
+    // create a new topic
+    const newTopic = this.topicService.save(new Topic('123')).name;
+    this.topics = topicService.query();
   }
 }

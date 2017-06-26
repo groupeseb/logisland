@@ -6,11 +6,10 @@ import { TopicListPage } from './topic/topic-list-page';
 import { TopicDetailPage } from './topic/topic-detail-page';
 import { PageNotFound } from './page-not-found';
 
-import { Router, RouterModule, Routes } from '@angular/router';
-import { BrowserModule } from '@angular/platform-browser';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome'
+import { BrowserModule } from '@angular/platform-browser';
 import 'hammerjs';
-import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http'; // <<< changed
 import { MdButtonModule,
          MdCardModule,
          MdIconModule,
@@ -19,14 +18,10 @@ import { MdButtonModule,
          MdSidenavModule,
          MdToolbarModule
         } from '@angular/material';
-import { RestangularModule, Restangular } from 'ngx-restangular';
+import { NgModule } from '@angular/core';
+import {ResourceModule} from 'ngx-resource';
 
-// Function for setting the default restangular configuration
-export function RestangularConfigFactory (RestangularProvider) {
-  // set the baseUrl of the agent
-  RestangularProvider.setBaseUrl('http://localhost:8081/');
-//  RestangularProvider.setDefaultHeaders({'Authorization': 'Bearer UDXPx-Xko0w4BRKajozCVy20X11MRZs1'});
-}
+import { Router, RouterModule, Routes } from '@angular/router';
 
 const appRoutes: Routes = [
   { path: '', component: HomePage },
@@ -47,6 +42,7 @@ const appRoutes: Routes = [
   imports: [
     Angular2FontawesomeModule,
     BrowserModule,
+    HttpModule,
     MdButtonModule,
     MdCardModule,
     MdIconModule,
@@ -54,8 +50,7 @@ const appRoutes: Routes = [
     MdMenuModule,
     MdSidenavModule,
     MdToolbarModule,
-    // Importing RestangularModule and making default configs for restanglar
-    RestangularModule.forRoot(RestangularConfigFactory),
+    ResourceModule.forRoot(),
     RouterModule.forRoot(
       appRoutes
     )
