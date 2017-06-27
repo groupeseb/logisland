@@ -5,24 +5,27 @@ import { TopicService } from './topic-service';
 
 @Component({
   selector: 'li-topic-list',
-  template: ` <h2><fa name="database"></fa> Topics</h2>
+  template: ` <h3 class="title"><i class="fa fa-database"></i> Topics</h3>
               <md-nav-list>
                 <md-list-item *ngFor="let topic of topics">
                   <a [routerLink]="['/topic/detail', topic.id]">
-                    {{topic.id}} {{topic.description}}
+                    {{topic.name}} {{topic.documentation}}
                   </a>
                 </md-list-item>
-             </md-nav-list>`
+             </md-nav-list>`,
+  styles: [`
+      .title {
+        text-align: left;
+        padding-left: 1em;
+      }
+    `]
 })
 
 export class TopicListPage {
-  topics: Topic[];
+  private topics: Topic[] = [];
 
   constructor(private topicService: TopicService) {
-    this.topics = [];
-    const tt: Topic[] = this.topicService.query({});
-    // create a new topic
-    const newTopic = this.topicService.save(new Topic('123')).name;
-    this.topics = topicService.query();
+    // get the topic
+    this.topics = this.topicService.query();
   }
 }

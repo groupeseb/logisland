@@ -1,6 +1,6 @@
 import { AppComponent } from './app.component';
+import { AppConfiguration } from './app.config';
 import { HomePage } from './home-page';
-import { LeftbarComponent } from './leftbar.component';
 import { TopicService } from './topic/topic-service';
 import { TopicListPage } from './topic/topic-list-page';
 import { TopicDetailPage } from './topic/topic-detail-page';
@@ -33,7 +33,6 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    LeftbarComponent,
     HomePage,
     TopicListPage,
     TopicDetailPage,
@@ -55,7 +54,7 @@ const appRoutes: Routes = [
       appRoutes
     )
   ],
-  providers: [ TopicService ],
+  providers: [ AppConfiguration, TopicService ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
