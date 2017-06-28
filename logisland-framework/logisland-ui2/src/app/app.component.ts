@@ -13,13 +13,13 @@ import { Component } from '@angular/core';
                 </table>
               </md-toolbar>
               <div>
-                <table>
+                <table style="width: 100%">
                   <tr valign="top">
                     <td class="leftbar">
                       <md-sidenav>
                         <md-nav-list>
                           <md-list-item>
-                            <h2><a routerLink="/topic" routerLinkActive="active">Topics</a></h2>
+                            <h3><a routerLink="/topic" routerLinkActive="active">Topics</a></h3>
                           </md-list-item>
                         </md-nav-list>
                       </md-sidenav>
@@ -37,7 +37,7 @@ import { Component } from '@angular/core';
       .leftbar {
         background-color: #eee;
         border-right: 1px solid #aaa;
-        width: 33%;
+        width: 200px;
         padding: 1em;
         padding-top: 0px;
       }
