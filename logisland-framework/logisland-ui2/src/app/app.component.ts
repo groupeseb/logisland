@@ -13,13 +13,13 @@ import { Component } from '@angular/core';
                 </table>
               </md-toolbar>
               <div>
-                <table style="width: 100%">
+                <table style="width: 100%; min-height: 800px">
                   <tr valign="top">
                     <td class="leftbar">
                       <md-sidenav>
                         <md-nav-list>
                           <md-list-item>
-                            <h3><a routerLink="/topic" routerLinkActive="active">Topics</a></h3>
+                            <h3><a routerLink="/topic" routerLinkActive="active"><i class="fa fa-database"></i> Topics</a></h3>
                           </md-list-item>
                         </md-nav-list>
                       </md-sidenav>

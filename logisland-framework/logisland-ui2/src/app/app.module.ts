@@ -12,10 +12,13 @@ import 'hammerjs';
 import { HttpModule } from '@angular/http'; // <<< changed
 import { MdButtonModule,
          MdCardModule,
+         MdCommonModule,
          MdIconModule,
+         MdInputModule,
          MdListModule,
          MdMenuModule,
          MdSidenavModule,
+         MdTabsModule,
          MdToolbarModule
         } from '@angular/material';
 import { NgModule } from '@angular/core';
@@ -26,7 +29,7 @@ import { Router, RouterModule, Routes } from '@angular/router';
 const appRoutes: Routes = [
   { path: '', component: HomePage },
   { path: 'topic', component: TopicListPage },
-  { path: 'topic/detail/:id', component: TopicDetailPage },
+  { path: 'topic/:id', component: TopicDetailPage },
   { path: '**', component: PageNotFound }
 ];
 
@@ -44,10 +47,13 @@ const appRoutes: Routes = [
     HttpModule,
     MdButtonModule,
     MdCardModule,
+    MdCommonModule,
     MdIconModule,
+    MdInputModule,
     MdListModule,
     MdMenuModule,
     MdSidenavModule,
+    MdTabsModule,
     MdToolbarModule,
     ResourceModule.forRoot(),
     RouterModule.forRoot(

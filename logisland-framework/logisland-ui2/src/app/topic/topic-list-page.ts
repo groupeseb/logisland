@@ -5,10 +5,10 @@ import { TopicService } from './topic-service';
 
 @Component({
   selector: 'li-topic-list',
-  template: ` <h3 class="title"><i class="fa fa-database"></i> Topics</h3>
+  template: ` <h3 class="title"> Topic Management</h3>
               <md-nav-list>
                 <md-list-item *ngFor="let topic of topics">
-                  <a [routerLink]="['/topic/detail', topic.id]">
+                  <a [routerLink]="['/topic', topic.id]">
                     {{topic.name}} {{topic.documentation}}
                   </a>
                 </md-list-item>

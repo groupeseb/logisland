@@ -1,23 +1,24 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Topic } from './topic';
+import { TopicService } from './topic-service';
 
 @Component({
   selector: 'li-topic-detail',
-  template: `TOPIC DETAIL {{id}}`
+  templateUrl: `./topic-detail-page.html`
 })
 
 export class TopicDetailPage implements OnInit, OnDestroy {
-  id: String;
   private sub: any;
+  private topic: Topic;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private topicService: TopicService, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-      this.id = params['id']; // (+) converts string 'id' to a number
-
+      const id = params['id'];
+      this.topic = this.topicService.get(id);
       // In a real app: dispatch action to load the details here.
     });
   }

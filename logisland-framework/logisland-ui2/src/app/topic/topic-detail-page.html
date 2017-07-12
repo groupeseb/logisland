@@ -1,0 +1,18 @@
+<md-card>
+  <md-card-header>
+    <md-card-title>{{ topic.name }}</md-card-title>
+    <md-card-subtitle>{{ topic.documentation }}</md-card-subtitle>
+  </md-card-header>
+  <md-card-content>
+  </md-card-content>
+  <md-card-actions layout="row" layout-align="start center">
+    <button md-button class="md-icon-button" ng-click="deleteTopic($event,topic)" aria-label="Delete Topic">
+            <md-icon md-svg-icon="delete"></md-icon>
+        </button>
+    <button md-button class="md-icon-button" ng-click="saveTopic(topic)" aria-label="Save Topic">
+            <md-icon md-svg-icon="save"></md-icon>
+        </button>
+    <button md-button>Cancel</button>
+    <button md-button>Export</button>
+  </md-card-actions>
+</md-card>
