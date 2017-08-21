@@ -14,7 +14,7 @@
 #
 # Use a descriptive name for your cluster:
 #
-#cluster.name: logisland
+cluster.name: elasticsearch-2.3
 #
 # ------------------------------------ Node ------------------------------------
 #

@@ -1,8 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 
 #. $(dirname $0)/launcher.sh
-lib_dir="$(readlink -f "$(dirname $0)/../lib")"
-CONF_DIR="$(readlink -f "$(dirname $0)/../conf")"
+
+case "$(uname -s)" in
+
+   Darwin)
+     echo "I've detected that you're running Mac OS X, using greadlink instead of readlink"
+     lib_dir="$(greadlink -f "$(dirname $0)/../lib")"
+     CONF_DIR="$(greadlink -f "$(dirname $0)/../conf")"
+     ;;
+
+   *)
+     lib_dir="$(readlink -f "$(dirname $0)/../lib")"
+     CONF_DIR="$(readlink -f "$(dirname $0)/../conf")"
+     ;;
+esac
+
+
 
 app_classpath=""
 for entry in "$lib_dir"/*
@@ -239,7 +253,14 @@ case $MODE in
     ;;
 esac
 
-java_cmd="${SPARK_HOME}/bin/spark-submit ${VERBOSE_OPTIONS} ${YARN_CLUSTER_OPTIONS} ${YARN_APP_NAME_OPTIONS} \
+PROPERTIES_FILE=""
+PROPERTIES_FILE_PATH=`awk '{ if( $1 == "spark.properties.file.path:" ){ print $2 } }' ${CONF_FILE}`
+if [ ! -z "${PROPERTIES_FILE_PATH}" ]
+then
+     PROPERTIES_FILE=" --properties-file ${PROPERTIES_FILE_PATH} "
+fi
+
+java_cmd="${SPARK_HOME}/bin/spark-submit ${VERBOSE_OPTIONS} ${YARN_CLUSTER_OPTIONS} ${PROPERTIES_FILE} ${YARN_APP_NAME_OPTIONS} \
     --class ${app_mainclass} \
     --jars ${app_classpath} \
     ${lib_dir}/logisland-spark*-engine*.jar \

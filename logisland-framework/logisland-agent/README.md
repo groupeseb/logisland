@@ -23,10 +23,6 @@ Note that if you have configured the `host` to be something other than localhost
 swagger-ui will be directed to that host and not localhost!
 
 
-```
-swagger-codegen generate --group-id com.hurence.logisland  --artifact-id logisland-agent --artifact-version 0.10.0-SNAPSHOT --api-package com.hurence.logisland.agent.rest.api --model-package com.hurence.logisland.agent.rest.model -o logisland-framework/logisland-agent -l jaxrs --template-dir logisland-framework/logisland-agent/src/main/raml/templates -i logisland-framework/logisland-agent/src/main/raml/api-swagger.yaml
-```
-
 ## How to start and debug the agent inside your IDE ?
 ### Prerequisites for all IDE
 start kafka and zookeeper  
@@ -47,11 +43,24 @@ TODO
 The easiest way to test the agent is via the command 'curl'. 
 Here are a couple of curl commands you can run to ensure the agent is working correctly:
 
+```
 curl -XGET http://localhost:8081/
+```
 -> should respond with {"type":"ok","message":"magic!"}
 
+```
 curl -XGET http://localhost:8081/jobs
+```
 
+```
 curl -XGET http://localhost:8081/processors
+```
 
+```
 curl -XGET http://localhost:8081/jobs
+```
+
+## How to generate the code? 
+```
+swagger-codegen generate --group-id com.hurence.logisland  --artifact-id logisland-agent --artifact-version 0.10.0-SNAPSHOT --api-package com.hurence.logisland.agent.rest.api --model-package com.hurence.logisland.agent.rest.model -o logisland-framework/logisland-agent -l jaxrs --template-dir logisland-framework/logisland-agent/src/main/raml/templates -i logisland-framework/logisland-agent/src/main/raml/api-swagger.yaml
+```
