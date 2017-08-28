@@ -4,7 +4,7 @@ import { Topic } from './topic';
 import { TopicService } from './topic-service';
 
 @Component({
-  selector: 'li-topic-detail',
+  selector: 'app-topic-detail',
   templateUrl: `./topic-detail-page.html`
 })
 

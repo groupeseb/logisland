@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'li-home',
+  selector: 'app-home',
   template: `HOME PAGE`
 })
 export class HomePage {

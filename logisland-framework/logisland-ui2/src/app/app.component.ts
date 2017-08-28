@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'li-root',
+  selector: 'app-root',
   template: `<div>
               <md-toolbar color="primary">
                 <table>
                   <tr>
                     <td><a routerLink="/"><i style="color: white" class="fa fa-bars"></i></a></td>
-                    <td >LogIsland</td>
+                    <td ><h1>LogIsland</h1></td>
                     <td width="100%" align="right"></td>
                   </tr>
                 </table>
@@ -19,9 +19,15 @@ import { Component } from '@angular/core';
                       <md-sidenav>
                         <md-nav-list>
                           <md-list-item>
-                            <h3><a routerLink="/topic" routerLinkActive="active"><i class="fa fa-database"></i> Topics</a></h3>
+                            <a md-line routerLink="/topic" routerLinkActive="active"><i class="fa fa-database"></i> Topics</a>
                           </md-list-item>
-                        </md-nav-list>
+                          <md-list-item>
+                            <a md-line routerLink="/job"><i class="fa fa-bolt"></i> Jobs</a>
+                          </md-list-item>
+                          <md-list-item>
+                          <a md-line routerLink="/error"><i class="fa fa-exclamation"></i> Errors</a>
+                        </md-list-item>
+                      </md-nav-list>
                       </md-sidenav>
                     </td>
                     <td>

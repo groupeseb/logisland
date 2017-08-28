@@ -1,6 +1,5 @@
 
 import { Injectable, Inject } from '@angular/core';
-import { Topic } from './topic/topic';
 
 @Injectable()
 export class AppConfiguration {

@@ -16,7 +16,7 @@ export class Topic {
     public name: string;
     public partitions = 1;
     public replicationFactor = 1;
-    public documentation: String = 'describe here the content of the topic';
+    public documentation: String = 'description of the topic';
     public serializer:  string; // = 'com.hurence.logisland.serializer.KryoSerializer';
     public businessTimeField:  String = 'record_time';
     public rowkeyField:  String = 'record_id';

@@ -1,8 +1,10 @@
 import { AppComponent } from './app.component';
 import { AppConfiguration } from './app.config';
+import {CdkTableModule} from '@angular/cdk';
 import { HomePage } from './home-page';
+import { JobService } from './job/job-service';
 import { TopicService } from './topic/topic-service';
-import { TopicListPage } from './topic/topic-list-page';
+import { TopicListComponent } from './topic/topic-list/topic-list.component';
 import { TopicDetailPage } from './topic/topic-detail-page';
 import { PageNotFound } from './page-not-found';
 
@@ -17,19 +19,25 @@ import { MdButtonModule,
          MdInputModule,
          MdListModule,
          MdMenuModule,
+         MdPaginatorModule,
          MdSidenavModule,
+         MdTableModule,
          MdTabsModule,
          MdToolbarModule
         } from '@angular/material';
+import { CovalentDataTableModule } from '@covalent/core';
 import { NgModule } from '@angular/core';
 import {ResourceModule} from 'ngx-resource';
-
 import { Router, RouterModule, Routes } from '@angular/router';
+import { JobListComponent } from './job/job-list/job-list.component';
+import { ErrorListComponent } from './error/error-list/error-list.component';
 
 const appRoutes: Routes = [
   { path: '', component: HomePage },
-  { path: 'topic', component: TopicListPage },
+  { path: 'topic', component: TopicListComponent },
   { path: 'topic/:id', component: TopicDetailPage },
+  { path: 'job', component: JobListComponent },
+  { path: 'error', component: ErrorListComponent },
   { path: '**', component: PageNotFound }
 ];
 
@@ -37,13 +45,17 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     HomePage,
-    TopicListPage,
     TopicDetailPage,
     PageNotFound,
+    TopicListComponent,
+    JobListComponent,
+    ErrorListComponent,
   ],
   imports: [
     Angular2FontawesomeModule,
     BrowserModule,
+    CdkTableModule,
+    CovalentDataTableModule,
     HttpModule,
     MdButtonModule,
     MdCardModule,
@@ -52,7 +64,9 @@ const appRoutes: Routes = [
     MdInputModule,
     MdListModule,
     MdMenuModule,
+    MdPaginatorModule,
     MdSidenavModule,
+    MdTableModule,
     MdTabsModule,
     MdToolbarModule,
     ResourceModule.forRoot(),
@@ -60,7 +74,7 @@ const appRoutes: Routes = [
       appRoutes
     )
   ],
-  providers: [ AppConfiguration, TopicService ],
+  providers: [ AppConfiguration, JobService, TopicService ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
