@@ -4,7 +4,6 @@ import { JobService } from './job/job-service';
 import { TopicService } from './topic/topic-service';
 import { TopicListComponent } from './topic/topic-list/topic-list.component';
 import { TopicDetailPage } from './topic/topic-detail-page';
-import { PageNotFound } from './page-not-found';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
@@ -29,6 +28,7 @@ import { ResourceModule } from 'ngx-resource';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { JobListComponent } from './job/job-list/job-list.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const appRoutes: Routes = [
   { path: '', component: HomePageComponent },
@@ -36,19 +36,20 @@ const appRoutes: Routes = [
   { path: 'topic/:id', component: TopicDetailPage },
   { path: 'job', component: JobListComponent },
   { path: 'error', component: ErrorListComponent },
-  { path: '**', component: PageNotFound }
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
   declarations: [
     HomePageComponent,
     TopicDetailPage,
-    PageNotFound,
+    PageNotFoundComponent,
     RootComponent,
     TopicListComponent,
     JobListComponent,
     ErrorListComponent,
     HomePageComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
