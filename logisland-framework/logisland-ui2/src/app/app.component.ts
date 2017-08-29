@@ -19,15 +19,15 @@ import { Component } from '@angular/core';
                       <md-sidenav>
                         <md-nav-list>
                           <md-list-item>
-                            <a md-line routerLink="/topic" routerLinkActive="active"><i class="fa fa-database"></i> Topics</a>
+                            <a md-line routerLink="/topic" routerLinkActive="active"><i class="fa fa-database"></i> TOPICS</a>
                           </md-list-item>
                           <md-list-item>
-                            <a md-line routerLink="/job"><i class="fa fa-bolt"></i> Jobs</a>
+                            <a md-line routerLink="/job"><i class="fa fa-bolt"></i> JOBS</a>
                           </md-list-item>
                           <md-list-item>
-                          <a md-line routerLink="/error"><i class="fa fa-exclamation"></i> Errors</a>
-                        </md-list-item>
-                      </md-nav-list>
+                            <a md-line routerLink="/error"><i class="fa fa-exclamation"></i> ERRORS</a>
+                          </md-list-item>
+                        </md-nav-list>
                       </md-sidenav>
                     </td>
                     <td>
@@ -39,7 +39,7 @@ import { Component } from '@angular/core';
                 </table>
               </div>
             </div>`,
-    styles: [`
+  styles: [`
       .leftbar {
         background-color: #eee;
         border-right: 1px solid #aaa;
