@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { SearchCriteria } from '../../search-criteria';
 import { Topic } from '../topic';
 import { TopicService } from '../topic-service';
@@ -18,7 +18,8 @@ import { CrudServiceToDataSource } from '../../crud-service-to-data-source';
 export class TopicListComponent {
   displayedColumns = ['name', 'documentation'];
   dataSource: DataSource<Topic>;
-
+  @ViewChild('filter') filter: ElementRef;
+  
   constructor(private service: TopicService) {
     this.dataSource = new CrudServiceToDataSource<Topic>(service);
   }

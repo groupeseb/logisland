@@ -1,14 +1,13 @@
-import { AppComponent } from './app.component';
 import { AppConfiguration } from './app.config';
-import {CdkTableModule} from '@angular/cdk';
+import { CdkTableModule } from '@angular/cdk';
 import { HomePage } from './home-page';
 import { JobService } from './job/job-service';
 import { TopicService } from './topic/topic-service';
 import { TopicListComponent } from './topic/topic-list/topic-list.component';
 import { TopicDetailPage } from './topic/topic-detail-page';
 import { PageNotFound } from './page-not-found';
-
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
 import { HttpModule } from '@angular/http'; // <<< changed
 import { MdButtonModule,
@@ -24,8 +23,9 @@ import { MdButtonModule,
          MdTabsModule,
          MdToolbarModule
         } from '@angular/material';
+import { RootComponent } from './root/root.component';
 import { NgModule } from '@angular/core';
-import {ResourceModule} from 'ngx-resource';
+import { ResourceModule } from 'ngx-resource';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { JobListComponent } from './job/job-list/job-list.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
@@ -41,16 +41,17 @@ const appRoutes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent,
     HomePage,
     TopicDetailPage,
     PageNotFound,
+    RootComponent,
     TopicListComponent,
     JobListComponent,
     ErrorListComponent,
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     CdkTableModule,
     HttpModule,
     MdButtonModule,
@@ -71,7 +72,7 @@ const appRoutes: Routes = [
     )
   ],
   providers: [ AppConfiguration, JobService, TopicService ],
-  bootstrap: [AppComponent]
+  bootstrap: [ RootComponent ]
 })
 export class AppModule {
   // Diagnostic only: inspect router configuration
