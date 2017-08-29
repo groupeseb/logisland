@@ -8,7 +8,6 @@ import { TopicListComponent } from './topic/topic-list/topic-list.component';
 import { TopicDetailPage } from './topic/topic-detail-page';
 import { PageNotFound } from './page-not-found';
 
-import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome'
 import { BrowserModule } from '@angular/platform-browser';
 import 'hammerjs';
 import { HttpModule } from '@angular/http'; // <<< changed
@@ -51,7 +50,6 @@ const appRoutes: Routes = [
     ErrorListComponent,
   ],
   imports: [
-    Angular2FontawesomeModule,
     BrowserModule,
     CdkTableModule,
     HttpModule,
