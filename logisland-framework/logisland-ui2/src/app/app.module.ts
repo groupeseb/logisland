@@ -1,6 +1,5 @@
 import { AppConfiguration } from './app.config';
 import { CdkTableModule } from '@angular/cdk';
-import { HomePage } from './home-page';
 import { JobService } from './job/job-service';
 import { TopicService } from './topic/topic-service';
 import { TopicListComponent } from './topic/topic-list/topic-list.component';
@@ -9,6 +8,7 @@ import { PageNotFound } from './page-not-found';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
+import { HomePageComponent } from './home-page/home-page.component';
 import { HttpModule } from '@angular/http'; // <<< changed
 import { MdButtonModule,
          MdCardModule,
@@ -31,7 +31,7 @@ import { JobListComponent } from './job/job-list/job-list.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
 
 const appRoutes: Routes = [
-  { path: '', component: HomePage },
+  { path: '', component: HomePageComponent },
   { path: 'topic', component: TopicListComponent },
   { path: 'topic/:id', component: TopicDetailPage },
   { path: 'job', component: JobListComponent },
@@ -41,13 +41,14 @@ const appRoutes: Routes = [
 
 @NgModule({
   declarations: [
-    HomePage,
+    HomePageComponent,
     TopicDetailPage,
     PageNotFound,
     RootComponent,
     TopicListComponent,
     JobListComponent,
     ErrorListComponent,
+    HomePageComponent,
   ],
   imports: [
     BrowserModule,
