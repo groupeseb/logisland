@@ -25,7 +25,6 @@ import { MdButtonModule,
          MdTabsModule,
          MdToolbarModule
         } from '@angular/material';
-import { CovalentDataTableModule } from '@covalent/core';
 import { NgModule } from '@angular/core';
 import {ResourceModule} from 'ngx-resource';
 import { Router, RouterModule, Routes } from '@angular/router';
@@ -55,7 +54,6 @@ const appRoutes: Routes = [
     Angular2FontawesomeModule,
     BrowserModule,
     CdkTableModule,
-    CovalentDataTableModule,
     HttpModule,
     MdButtonModule,
     MdCardModule,
