@@ -10,7 +10,7 @@ import { TopicService } from './topic-service';
 
 export class TopicDetailPage implements OnInit, OnDestroy {
   private sub: any;
-  private topic: Topic;
+  private topic;
 
   constructor(private topicService: TopicService, private route: ActivatedRoute) {
   }

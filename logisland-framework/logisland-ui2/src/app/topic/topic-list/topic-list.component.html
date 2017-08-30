@@ -1,5 +1,5 @@
 <md-input-container floatPlaceholder="never">
-  <input mdInput #filter placeholder="Filter Topics">
+  <input mdInput #searchFilter (keyup)="onSearch(searchFilter.value)" placeholder="Filter Topics">
 </md-input-container>
 <md-table #table [dataSource]="dataSource">
   <!-- name -->

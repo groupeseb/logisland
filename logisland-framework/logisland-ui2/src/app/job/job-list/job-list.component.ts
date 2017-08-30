@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Job } from '../job';
 import { JobService } from '../job-service';
-import { CrudServiceToDataSource } from '../../crud-service-to-data-source';
+import { RestDataSource } from '../../rest-data-source';
 
 @Component({
   selector: 'app-job-list',
@@ -18,7 +18,7 @@ export class JobListComponent {
   dataSource: DataSource<Job>;
 
   constructor(private service: JobService) {
-    this.dataSource = new CrudServiceToDataSource<Job>(service);
+    this.dataSource = new RestDataSource<Job>(service);
   }
 
 }

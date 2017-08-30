@@ -1,13 +1,14 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SearchCriteria } from '../../search-criteria';
 import { Topic } from '../topic';
 import { TopicService } from '../topic-service';
-import { DataSource } from '@angular/cdk';
+import { DataSourceExt } from '../../data-source-ext';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+
 import { ITdDataTableColumn } from '@covalent/core';
 import { TdDialogService } from '@covalent/core';
-import { CrudServiceToDataSource } from '../../crud-service-to-data-source';
+import { RestDataSource } from '../../rest-data-source';
 
 @Component({
   selector: 'app-topic-list',
@@ -15,13 +16,20 @@ import { CrudServiceToDataSource } from '../../crud-service-to-data-source';
   styleUrls: ['./topic-list.component.css']
 })
 
-export class TopicListComponent {
+export class TopicListComponent implements OnInit {
   displayedColumns = ['name', 'documentation'];
-  dataSource: DataSource<Topic>;
-  @ViewChild('filter') filter: ElementRef;
-  
+  dataSource: DataSourceExt<Topic>;
+
   constructor(private service: TopicService) {
-    this.dataSource = new CrudServiceToDataSource<Topic>(service);
+    this.dataSource = new RestDataSource<Topic>(this.service);
+  }
+
+  onSearch(value: string) {
+    console.log('press enter');
+    this.dataSource.searchFilter = value;
+  }
+
+  ngOnInit() {
   }
 
 }
