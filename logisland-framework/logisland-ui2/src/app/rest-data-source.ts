@@ -29,14 +29,6 @@ export class RestDataSource<T> extends DataSourceExt<T> {
   disconnect() { }
 
   search(): Observable<T[]> {
-    console.log('search called');
-    const filteredValues = this._restService.search().filter(row => {
-      console.log('filter called');
-      return true;
-    });
-    return filteredValues.map(a => {
-      console.log('map called');
-      return a.json();
-    })
+    return this.connect();
   }
 }
