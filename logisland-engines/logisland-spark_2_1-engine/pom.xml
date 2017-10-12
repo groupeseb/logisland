@@ -27,6 +27,12 @@ http://www.w3.org/2001/XMLSchema-instance ">
     </parent>
     <artifactId>logisland-spark_2_1-engine_${scala.binary.version}</artifactId>
     <packaging>jar</packaging>
+
+    <properties>
+        <scala.base>${scala.binary.version}</scala.base>
+        <json.typesafe.play.version>2.4.0-M1</json.typesafe.play.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.hurence.logisland</groupId>
@@ -105,6 +111,13 @@ http://www.w3.org/2001/XMLSchema-instance ">
             <scope>compile</scope>
         </dependency>
 
+
+        <!-- Used for parsing in JSON -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-json_${scala.base}</artifactId>
+            <version>${json.typesafe.play.version}</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
