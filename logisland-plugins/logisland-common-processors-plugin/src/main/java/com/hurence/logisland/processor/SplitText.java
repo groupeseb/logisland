@@ -225,7 +225,7 @@ public class SplitText extends AbstractProcessor {
                             for (int i = 0; i < keyMatcher.groupCount() + 1 && i < keyFields.length; i++) {
                                 String content = keyMatcher.group(i);
                                 if (content != null) {
-                                    outputRecord.setField(keyFields[i], FieldType.STRING, keyMatcher.group(i + 1).replaceAll("\"", ""));
+                                    outputRecord.setField(keyFields[i], FieldType.STRING, keyMatcher.group(i + 1));
                                 }
                             }
                         } else {
@@ -237,7 +237,7 @@ public class SplitText extends AbstractProcessor {
                                 " : " + e.getMessage();
                         logger.warn(errorMessage);
                         outputRecord.addError(ProcessError.REGEX_MATCHING_ERROR.getName(), errorMessage);
-                        outputRecord.setField(FieldDictionary.RECORD_RAW_KEY, FieldType.STRING, value);
+                        outputRecord.setField(FieldDictionary.RECORD_RAW_KEY, FieldType.STRING, key);
                     }
                 }
                 /**
@@ -337,7 +337,7 @@ public class SplitText extends AbstractProcessor {
             String content = valueMatcher.group(i + 1);
             String fieldName = valueFields[i];
             if (content != null) {
-                outputRecord.setStringField(fieldName, content.replaceAll("\"", ""));
+                outputRecord.setStringField(fieldName, content);
             }
         }
 
