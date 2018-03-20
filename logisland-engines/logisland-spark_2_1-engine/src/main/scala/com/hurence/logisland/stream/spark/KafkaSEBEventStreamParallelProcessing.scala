@@ -199,7 +199,7 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                     case ex: OffsetOutOfRangeException =>
                         val inputTopics = streamContext.getPropertyValue(AbstractKafkaRecordStream.INPUT_TOPICS).asString
                         val brokerList = streamContext.getPropertyValue(AbstractKafkaRecordStream.KAFKA_METADATA_BROKER_LIST).asString
-                        val latestOffsetsString = zkSink.value.loadOffsetRangesFromZookeeper(
+                        /* val latestOffsetsString = zkSink.value.loadOffsetRangesFromZookeeper(
                             brokerList,
                             appName,
                             inputTopics.split(",").toSet)
@@ -208,8 +208,8 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                         val offestsString = offsetRanges
                             .map(o => s"${o.topic}_${o.partition}:${o.fromOffset}/${o.untilOffset}")
                             .mkString(", ")
+                        logger.error(s"unable to process partition. current Offsets $offestsString latest offsets $latestOffsetsString") */
                         logger.error(s"exception : ${ex.toString}")
-                        logger.error(s"unable to process partition. current Offsets $offestsString latest offsets $latestOffsetsString")
                 }
             })
             Some(offsetRanges)
