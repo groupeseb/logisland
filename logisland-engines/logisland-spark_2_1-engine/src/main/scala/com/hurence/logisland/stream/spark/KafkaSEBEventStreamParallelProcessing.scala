@@ -28,7 +28,7 @@ import org.apache.kafka.common.errors.OffsetOutOfRangeException
 import org.apache.spark.TaskContext
 import org.apache.spark.groupon.metrics.{SparkMeter, UserMetricsSystem}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.kafka010.{HasOffsetRanges, OffsetRange}
+import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, OffsetRange}
 import org.slf4j.LoggerFactory
 import play.api.libs.json.{JsArray, Json}
 
@@ -210,6 +210,7 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                             .mkString(", ")
                         logger.error(s"unable to process partition. current Offsets $offestsString latest offsets $latestOffsetsString") */
                         logger.error(s"exception : ${ex.toString}")
+
                 }
             })
             Some(offsetRanges)

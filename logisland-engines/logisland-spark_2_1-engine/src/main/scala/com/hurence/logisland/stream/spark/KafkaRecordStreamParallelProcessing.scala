@@ -28,7 +28,7 @@ import org.apache.kafka.common.errors.OffsetOutOfRangeException
 import org.apache.spark.TaskContext
 import org.apache.spark.groupon.metrics.{SparkMeter, UserMetricsSystem}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.kafka010.{HasOffsetRanges, OffsetRange}
+import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, OffsetRange}
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConversions._
@@ -137,7 +137,6 @@ class KafkaRecordStreamParallelProcessing extends AbstractKafkaRecordStream {
                             /**
                               * compute metrics
                               */
-
                             ProcessorMetrics.computeMetrics(
                                 pipelineMetricPrefix + processorContext.getName + ".",
                                 incomingEvents,
@@ -145,7 +144,6 @@ class KafkaRecordStreamParallelProcessing extends AbstractKafkaRecordStream {
                                 offsetRange.fromOffset,
                                 offsetRange.untilOffset,
                                 System.currentTimeMillis() - startTime)
-
 
                             processorTimerContext.stop()
                         })
