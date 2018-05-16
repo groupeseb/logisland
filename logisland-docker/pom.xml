@@ -7,10 +7,14 @@
     <parent>
         <groupId>com.hurence.logisland</groupId>
         <artifactId>logisland</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.2</version>
     </parent>
     <packaging>pom</packaging>
     <artifactId>logisland-docker</artifactId>
+
+    <properties>
+        <proxy></proxy>
+    </properties>
 
     <profiles>
         <!-- Profile for building official Docker images. Not bound to build phases
@@ -31,14 +35,14 @@
                                     <goal>build</goal>
                                 </goals>
                                 <configuration>
-                                    <imageName>hurence/logisland-hdp${hdp}</imageName>
+                                    <imageName>groupeseb/logisland-hdp${hdp}</imageName>
                                     <dockerDirectory>${project.basedir}/full-container</dockerDirectory>
                                     <imageTags>
                                         <imageTag>${project.version}</imageTag>
                                     </imageTags>
-                                    <!--buildArgs>
-                                        <LOGISLAND_VERSION>${project.version}</LOGISLAND_VERSION>
-                                    </buildArgs-->
+                                    <buildArgs>
+                                        <PROXY>${proxy}</PROXY>
+                                    </buildArgs>
                                     <resources>
                                         <resource>
                                             <targetPath>/</targetPath>

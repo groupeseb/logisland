@@ -1,0 +1,182 @@
+#########################################################################################################
+# Logisland configuration script template
+#########################################################################################################
+
+version: 0.10.2
+documentation: LogIsland analytics main config file. Put here every engine or component config
+
+#########################################################################################################
+# engine
+engine:
+  component: com.hurence.logisland.engine.spark.KafkaStreamProcessingEngine
+  type: engine
+  documentation: Index some events with logisland
+  configuration:
+    spark.app.name: Events
+    spark.master: local[4]
+    spark.driver.memory: 1G
+    spark.driver.cores: 1
+    spark.executor.memory: 2G
+    spark.executor.instances: 4
+    spark.executor.cores: 2
+    spark.yarn.queue: default
+    spark.yarn.maxAppAttempts: 4
+    spark.yarn.am.attemptFailuresValidityInterval: 1h
+    spark.yarn.max.executor.failures: 20
+    spark.yarn.executor.failuresValidityInterval: 1h
+    spark.task.maxFailures: 8
+    spark.serializer: org.apache.spark.serializer.KryoSerializer
+    spark.streaming.batchDuration: 4000
+    spark.streaming.backpressure.enabled: false
+    spark.streaming.unpersist: false
+    spark.streaming.blockInterval: 500
+    spark.streaming.kafka.maxRatePerPartition: 3000
+    spark.streaming.timeout: -1
+    spark.streaming.unpersist: false
+    spark.streaming.kafka.maxRetries: 3
+    spark.streaming.ui.retainedBatches: 200
+    spark.streaming.receiver.writeAheadLog.enable: false
+    spark.ui.port: 4050
+
+  controllerServiceConfigurations:
+
+    - controllerService: ElasticsearchService
+      component: com.hurence.logisland.service.elasticsearch.Elasticsearch_5_4_0_ClientService
+      type: service
+      documentation: elasticsearch service
+      configuration:
+#        hosts: sandbox:9300
+        hosts: sl06q789.seb.com:9300
+        cluster.name: es-logisland
+        batch.size: 5000
+
+  streamConfigurations:
+  
+
+    # parsing
+    - stream: CookeoStream
+      component: com.hurence.logisland.stream.spark.KafkaSEBEventStreamParallelProcessing
+      type: stream
+      documentation: a processor that converts raw apache logs into structured log records
+      configuration:
+        kafka.input.topics: logisland_raw
+        kafka.output.topics: logisland_events
+        kafka.error.topics: logisland_errors
+        kafka.input.topics.serializer: none
+        kafka.output.topics.serializer: com.hurence.logisland.serializer.JsonSerializer
+        kafka.error.topics.serializer: com.hurence.logisland.serializer.JsonSerializer
+        kafka.metadata.broker.list: sl06q789.seb.com:9092
+        kafka.zookeeper.quorum: sl06q789.seb.com:2181
+        kafka.topic.autoCreate: true
+        kafka.topic.default.partitions: 4
+        kafka.topic.default.replicationFactor: 1
+        # earliest, latest
+        kafka.manual.offset.reset: latest
+      processorConfigurations:
+
+        - processor: CookeoEventsParser
+          component: com.hurence.logisland.processor.SplitText
+          type: parser
+          configuration:
+            record.type: mobile_event
+            # if using only lookarounds, end with .* to capture all field and populate record_raw_value
+            value.regex: '(?=.*"ssid":"([^"]*)".*)?(?=.*"platform":"([^"]*)".*)?(?=.*"anonymousid":"([^"]*)".*)?(?=.*"userid":"([^"]*)".*)?(?=.*"type":"([^"]*)".*)?(?=.*,"date":"([^"]*)",.*)?(?=.*"application_name":"([^"]*)".*)?(?=.*"application_version":"([^"]*)".*)?(?=.*"libVersion":"([^"]*)".*)?(?=.*"model":"([^"]*)".*)?(?=.*"os_version":"([^"]*)".*)?(?=.*"params":\[([^\]]*)\].*)?(?=.*"context":(\{[^\}]*\}).*)?(?=.*"application_lang_market":"([^"]*)".*)?.*'
+            value.fields: event_ssid,event_platform,event_anonymousid,event_userid,event_type,event_date,event_application_name,event_application_version,event_libVersion,event_model,event_os_version,event_params,event_context,event_application_langMarket
+
+#        - processor: CookeoEventsParser
+#          component: com.hurence.logisland.processor.EvaluateJsonPath
+#          type: parser
+#          configuration:
+#            event_ssid: $.ssid
+#            event_platform: $.context.platform
+#            event_anonymousid: $.user.anonymousid
+#            event_userid: $.user.userid
+#            event_type: $.type
+#            event_date: $.date
+#            event_application_name: $.context.application_name
+#            event_application_version: $.context.application_version
+#            event_libVersion: $.libVersion
+#            event_model: $.context.model
+#            event_os_version: $.context.os_version
+#            event_params: $.params
+#            event_context: $.context
+#            event_application_langMarket: $.context.application_lang_market
+
+       # Bulk add to elasticsearch
+        - processor: BulkAddElasticsearch
+          component: com.hurence.logisland.processor.elasticsearch.BulkAddElasticsearch
+          type: processor
+          documentation: a processor that indexes processed events in elasticsearch
+          configuration:
+            elasticsearch.client.service: ElasticsearchService
+            default.index: logisland
+            default.type: event
+            timebased.index: today
+            es.index.field: search_index
+            es.type.field: record_type
+
+    # parsing
+    - stream: OPCStream
+      component: com.hurence.logisland.stream.spark.KafkaRecordStreamParallelProcessing
+      type: stream
+      documentation: a processor that converts raw apache logs into structured log records
+      configuration:
+        kafka.input.topics: opc_raw
+        kafka.output.topics: opc_events
+        kafka.error.topics: opc_errors
+        kafka.input.topics.serializer: none
+        kafka.output.topics.serializer: com.hurence.logisland.serializer.JsonSerializer
+        kafka.error.topics.serializer: com.hurence.logisland.serializer.JsonSerializer
+        kafka.metadata.broker.list: sl06q789.seb.com:9092
+        kafka.zookeeper.quorum: sl06q789.seb.com:2181
+        kafka.topic.autoCreate: true
+        kafka.topic.default.partitions: 4
+        kafka.topic.default.replicationFactor: 1
+        # earliest, latest
+        kafka.manual.offset.reset: latest
+      processorConfigurations:
+      
+
+        - processor: OPCEventsParser
+          component: com.hurence.logisland.processor.SplitText
+          type: parser
+          configuration:
+            record.type: opc_event
+            # if using only lookarounds, end with .* to capture all field and populate record_raw_value
+            value.regex: '(?=.*"sourceTime":"?([\d\.-]*).*)?(?=.*Injection1.sv_dCalculatedDurationPlast.*?value":"?([\d\.]*).*)?(?=.*Injection1.sv_rCushion.*?value":"?([\d\.]*).*)?(?=.*Injection1.sv_dCalculatedDurationInject.*?value":"?([\d\.]*).*)?(?=.*system.sv_dLastCycleTime.*?value":"?([\d\.]*).*)?(?=.*Injection1.sv_dDurationInjectAndHold.*?value":"?([\d\.]*).*)?(?=.*Injection1.sv_rInjPeakPressureSpec.*?value":"?([\d\.]*).*)?(?=.*Injection1.sv_rInjPeakPressure.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp1.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp2.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp2.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp3.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp4.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp5.*?value":"?([\d\.]*).*)?(?=.*HeatingNozzle1.ti_InTemp6.*?value":"?([\d\.]*).*)?(?=.*Euromap.sv_dRobotTakePartTime.*?value":"?([\d\.]*).*)?(?=.*OilMaintenance1.ti_OilTemp.*?value":"?([\d\.]*).*)?(?=.*CoolingTime1.sv_dCoolingTime.*?value":"?([\d\.]*).*)?.*'
+            value.fields: opc_source_time,opc_duree_calculee_plastification,opc_matelas_cm3,opc_duree_injection,opc_dernier_temps_cycle,opc_duree_injectee_et_maintien,opc_pic_pression_barspe,opc_pic_pression_injection,opc_cylindre_zone1,opc_cylindre_zone2,opc_cylindre_zone3,opc_cylindre_zone4,opc_cylindre_zone5,opc_cylindre_zone6,opc_temps_robot_dans_presse,opc_maintenance_huile_temperature,opc_temps_de_refroidissement
+
+        - processor: OPCConvertType
+          component: com.hurence.logisland.processor.ConvertFieldsType
+          type: processor
+          configuration:
+            opc_duree_calculee_plastification: float
+            opc_matelas_cm3: float
+            opc_duree_injection: float
+            opc_dernier_temps_cycle: float
+            opc_duree_injectee_et_maintien: float
+            opc_pic_pression_barspe: float
+            opc_pic_pression_injection: float
+            opc_cylindre_zone1: float
+            opc_cylindre_zone2: float
+            opc_cylindre_zone3: float
+            opc_cylindre_zone4: float
+            opc_cylindre_zone5: float
+            opc_cylindre_zone6: float
+            opc_temps_robot_dans_presse: float
+            opc_maintenance_huile_temperature: float
+            opc_temps_de_refroidissement: float
+
+       # Bulk add to elasticsearch
+        - processor: BulkAddElasticsearch
+          component: com.hurence.logisland.processor.elasticsearch.BulkAddElasticsearch
+          type: processor
+          documentation: a processor that indexes processed events in elasticsearch
+          configuration:
+            elasticsearch.client.service: ElasticsearchService
+            default.index: opc_index
+            default.type: event
+            timebased.index: today
+            es.index.field: search_index
+            es.type.field: record_type
+
