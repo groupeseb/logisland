@@ -50,7 +50,7 @@ public class FilterRecords extends AbstractProcessor {
 
     public static final PropertyDescriptor FIELD_VALUE = new PropertyDescriptor.Builder()
             .name("field.value")
-            .description("the field value to keep")
+            .description("the regex the field value must match to be kept")
             .required(true)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -67,7 +67,7 @@ public class FilterRecords extends AbstractProcessor {
         String fieldValue = context.getPropertyValue(FIELD_VALUE).asString();
 
         return records.stream()
-                .filter(record -> record.hasField(fieldName) && record.getField(fieldName).asString().equals(fieldValue))
+                .filter(record -> record.hasField(fieldName) && record.getField(fieldName).asString().matches(fieldValue))
                 .collect(Collectors.toList());
 
     }

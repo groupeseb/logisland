@@ -486,7 +486,7 @@ In the list below, the names of required properties appear in **bold**. Any othe
    :widths: 20,60,30,20,10,10
 
    "**field.name**", "the field name", "", "record_id", "", ""
-   "**field.value**", "the field value to keep", "", "null", "", ""
+   "**field.value**", "the regex the field value must match to be kept", "", "null", "", ""
 
 ----------
 
