@@ -57,7 +57,7 @@ node {
         }
     }
 
-    stage('Deploy Flume-API ') {
+    stage('Deploy LogIsland ') {
         if (params.DEPLOY_PROFILE == 'config') {
             ansiblePlaybook(
                 credentialsId: '6d61644b-e985-45b3-8344-6c44af8143d6',
