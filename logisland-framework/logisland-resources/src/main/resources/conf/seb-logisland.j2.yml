@@ -50,6 +50,7 @@ engine:
         cluster.name: es-logisland
         batch.size: 5000
 
+  # Stream configs
   streamConfigurations:
   
 
