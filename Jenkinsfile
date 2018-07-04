@@ -73,7 +73,8 @@ node {
                 installation: 'ansible',
                 inventory: '${WORKSPACE_ANSIBLE}/inventory-${ENV}',
                 playbook: '${WORKSPACE_ANSIBLE}/playbook-deploy-logisland.yml',
-                extras: '--extra-vars "WORKSPACE=${WORKSPACE} JENKINS_URL=${JENKINS_URL} JOB_NAME=${JOB_NAME} BUILD_URL=${BUILD_URL} BUILD_ID=${BUILD_ID} BUILD_NUMBER=${BUILD_NUMBER} '
+                extras: '--extra-vars "WORKSPACE=${WORKSPACE} JENKINS_URL=${JENKINS_URL} JOB_NAME=${JOB_NAME} BUILD_URL=${BUILD_URL} BUILD_ID=${BUILD_ID} BUILD_NUMBER=${BUILD_NUMBER} ',
+                tags: 'logisland-docker'
             )
         }
     }
