@@ -30,17 +30,14 @@ import org.apache.spark.groupon.metrics.{SparkMeter, UserMetricsSystem}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, OffsetRange}
 import org.slf4j.LoggerFactory
-import play.api.libs.json.{JsArray, Json}
 
 import scala.collection.JavaConversions._
+import com.hurence.logisland.stream.StreamProperties._
+import play.api.libs.json.{JsArray, Json}
 
-
-object KafkaSEBEventStreamParallelProcessing {
-
-}
 
 class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
-    val logger = LoggerFactory.getLogger(KafkaSEBEventStreamParallelProcessing.getClass.getName)
+    val logger = LoggerFactory.getLogger(this.getClass)
 
     override def getSupportedPropertyDescriptors: util.List[PropertyDescriptor] = {
         val descriptors: util.List[PropertyDescriptor] = new util.ArrayList[PropertyDescriptor]
@@ -79,14 +76,14 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                           * create serializers
                           */
                         val deserializer = getSerializer(
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.INPUT_SERIALIZER).asString,
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.AVRO_INPUT_SCHEMA).asString)
+                            streamContext.getPropertyValue(INPUT_SERIALIZER).asString,
+                            streamContext.getPropertyValue(AVRO_INPUT_SCHEMA).asString)
                         val serializer = getSerializer(
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.OUTPUT_SERIALIZER).asString,
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.AVRO_OUTPUT_SCHEMA).asString)
+                            streamContext.getPropertyValue(OUTPUT_SERIALIZER).asString,
+                            streamContext.getPropertyValue(AVRO_OUTPUT_SCHEMA).asString)
                         val errorSerializer = getSerializer(
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.ERROR_SERIALIZER).asString,
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.AVRO_OUTPUT_SCHEMA).asString)
+                            streamContext.getPropertyValue(ERROR_SERIALIZER).asString,
+                            streamContext.getPropertyValue(AVRO_OUTPUT_SCHEMA).asString)
 
                         /**
                           * process events by chaining output records
@@ -107,8 +104,8 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                               */
                             if (firstPass) {
                                 incomingEvents = if (
-                                    streamContext.getPropertyValue(AbstractKafkaRecordStream.INPUT_SERIALIZER).asString
-                                        == AbstractKafkaRecordStream.NO_SERIALIZER.getValue) {
+                                    streamContext.getPropertyValue(INPUT_SERIALIZER).asString
+                                        == NO_SERIALIZER.getValue) {
                                     // parser
                                     partition.flatMap(rawMessage => {
                                         val value = if (rawMessage.value() != null) new String(rawMessage.value()) else ""
@@ -145,7 +142,6 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                             /**
                               * compute metrics
                               */
-
                             ProcessorMetrics.computeMetrics(
                                 pipelineMetricPrefix + processorContext.getName + ".",
                                 incomingEvents,
@@ -154,7 +150,6 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                                 offsetRange.untilOffset,
                                 System.currentTimeMillis() - startTime)
 
-
                             processorTimerContext.stop()
                         })
 
@@ -162,9 +157,9 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                         /**
                           * Do we make records compliant with a given Avro schema ?
                           */
-                        if (streamContext.getPropertyValue(AbstractKafkaRecordStream.AVRO_OUTPUT_SCHEMA).isSet) {
+                        if (streamContext.getPropertyValue(AVRO_OUTPUT_SCHEMA).isSet) {
                             try {
-                                val strSchema = streamContext.getPropertyValue(AbstractKafkaRecordStream.AVRO_OUTPUT_SCHEMA).asString()
+                                val strSchema = streamContext.getPropertyValue(AVRO_OUTPUT_SCHEMA).asString()
                                 val parser = new Schema.Parser
                                 val schema = parser.parse(strSchema)
 
@@ -181,13 +176,13 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                           * push outgoing events and errors to Kafka
                           */
                         kafkaSink.value.produce(
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.OUTPUT_TOPICS).asString,
+                            streamContext.getPropertyValue(OUTPUT_TOPICS).asString,
                             outgoingEvents.toList,
                             serializer
                         )
 
                         kafkaSink.value.produce(
-                            streamContext.getPropertyValue(AbstractKafkaRecordStream.ERROR_TOPICS).asString,
+                            streamContext.getPropertyValue(ERROR_TOPICS).asString,
                             outgoingEvents.filter(r => r.hasField(FieldDictionary.RECORD_ERRORS)).toList,
                             errorSerializer
                         )
@@ -197,18 +192,18 @@ class KafkaSEBEventStreamParallelProcessing extends AbstractKafkaRecordStream {
                 }
                 catch {
                     case ex: OffsetOutOfRangeException =>
-                        val inputTopics = streamContext.getPropertyValue(AbstractKafkaRecordStream.INPUT_TOPICS).asString
-                        val brokerList = streamContext.getPropertyValue(AbstractKafkaRecordStream.KAFKA_METADATA_BROKER_LIST).asString
+                        val inputTopics = streamContext.getPropertyValue(INPUT_TOPICS).asString
+                        val brokerList = streamContext.getPropertyValue(KAFKA_METADATA_BROKER_LIST).asString
                         /* val latestOffsetsString = zkSink.value.loadOffsetRangesFromZookeeper(
-                            brokerList,
-                            appName,
-                            inputTopics.split(",").toSet)
-                            .map(t => s"${t._1.topic}_${t._1.partition}:${t._2}")
-                            .mkString(", ")
-                        val offestsString = offsetRanges
-                            .map(o => s"${o.topic}_${o.partition}:${o.fromOffset}/${o.untilOffset}")
-                            .mkString(", ")
-                        logger.error(s"unable to process partition. current Offsets $offestsString latest offsets $latestOffsetsString") */
+                             brokerList,
+                             appName,
+                             inputTopics.split(",").toSet)
+                             .map(t => s"${t._1.topic}_${t._1.partition}:${t._2}")
+                             .mkString(", ")
+                         val offestsString = offsetRanges
+                             .map(o => s"${o.topic}_${o.partition}:${o.fromOffset}/${o.untilOffset}")
+                             .mkString(", ")
+                         logger.error(s"unable to process partition. current Offsets $offestsString latest offsets $latestOffsetsString")*/
                         logger.error(s"exception : ${ex.toString}")
 
                 }

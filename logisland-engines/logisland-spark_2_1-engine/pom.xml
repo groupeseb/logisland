@@ -23,32 +23,58 @@ http://www.w3.org/2001/XMLSchema-instance ">
     <parent>
         <groupId>com.hurence.logisland</groupId>
         <artifactId>logisland-engines</artifactId>
-        <version>0.12.2</version>
+        <version>0.13.0</version>
     </parent>
     <artifactId>logisland-spark_2_1-engine_${scala.binary.version}</artifactId>
     <packaging>jar</packaging>
 
+
     <properties>
-        <scala.base>${scala.binary.version}</scala.base>
+        <swagger-core-version>1.5.16</swagger-core-version>
+
+        <junit-version>4.12</junit-version>
+        <scala-maven-plugin-version>3.1.5</scala-maven-plugin-version>
+        <scala-test-version>3.0.4</scala-test-version>
+        <swagger-async-httpclient-version>0.3.5</swagger-async-httpclient-version>
         <json.typesafe.play.version>2.4.0-M1</json.typesafe.play.version>
+
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.hurence.logisland</groupId>
-            <artifactId>logisland-api</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.hurence.logisland</groupId>
-            <artifactId>logisland-agent</artifactId>
+            <artifactId>logisland-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.hurence.logisland</groupId>
             <artifactId>logisland-utils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.hurence.logisland</groupId>
             <artifactId>logisland-common-processors-plugin</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.hurence.logisland</groupId>
@@ -58,14 +84,12 @@ http://www.w3.org/2001/XMLSchema-instance ">
             <groupId>com.typesafe.scala-logging</groupId>
             <artifactId>scala-logging-slf4j_${scala.binary.version}</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>com.groupon.dse</groupId>
             <artifactId>spark-metrics</artifactId>
@@ -89,6 +113,16 @@ http://www.w3.org/2001/XMLSchema-instance ">
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kafka-0-10_${scala.binary.version}</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql-kafka-0-10_${scala.binary.version}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.bahir</groupId>
+            <artifactId>spark-sql-streaming-mqtt_2.11</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
 
 
         <dependency>
@@ -103,6 +137,32 @@ http://www.w3.org/2001/XMLSchema-instance ">
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.3.Final</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.glassfish/javax.el -->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
 
         <!-- Scala dependencies -->
         <dependency>
@@ -115,7 +175,7 @@ http://www.w3.org/2001/XMLSchema-instance ">
         <!-- Used for parsing in JSON -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>play-json_${scala.base}</artifactId>
+            <artifactId>play-json_${scala.binary.version}</artifactId>
             <version>${json.typesafe.play.version}</version>
         </dependency>
 
@@ -124,6 +184,13 @@ http://www.w3.org/2001/XMLSchema-instance ">
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -138,11 +205,29 @@ http://www.w3.org/2001/XMLSchema-instance ">
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>${swagger-core-version}</version>
+        </dependency>
+
+        <!-- Lightweight dependencies for http rest connections -->
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-urlconnection</artifactId>
+            <version>3.10.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>3.10.0</version>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 
@@ -157,6 +242,7 @@ http://www.w3.org/2001/XMLSchema-instance ">
                         <id>scala-compile-first</id>
                         <phase>process-resources</phase>
                         <goals>
+                            <goal>add-source</goal>
                             <goal>compile</goal>
                         </goals>
                     </execution>

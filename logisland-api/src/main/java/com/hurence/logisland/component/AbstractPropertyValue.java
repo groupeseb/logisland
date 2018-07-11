@@ -17,8 +17,13 @@ package com.hurence.logisland.component;
 
 import com.hurence.logisland.controller.ControllerService;
 import com.hurence.logisland.controller.ControllerServiceLookup;
+import com.hurence.logisland.record.FieldDictionary;
 import com.hurence.logisland.record.Record;
+import com.hurence.logisland.record.StandardRecord;
 import com.hurence.logisland.registry.VariableRegistry;
+import com.hurence.logisland.util.FormatUtils;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mathieu on 08/06/17.
@@ -69,8 +74,20 @@ public abstract class AbstractPropertyValue implements PropertyValue {
     }
 
     @Override
+    public Long asTimePeriod(final TimeUnit timeUnit) {
+        return (rawValue == null) ? null : FormatUtils.getTimeDuration(rawValue.toString().trim(), timeUnit);
+    }
+
+
+    @Override
     public boolean isSet() {
         return getRawValue() != null;
+    }
+
+    @Override
+    public Record asRecord() {
+        return (getRawValue() == null) ? null : new StandardRecord()
+                .setStringField(FieldDictionary.RECORD_VALUE,getRawValue().trim());
     }
 
     @Override

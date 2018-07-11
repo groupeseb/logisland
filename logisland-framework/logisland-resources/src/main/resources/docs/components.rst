@@ -147,6 +147,284 @@ In the list below, the names of required properties appear in **bold**. Any othe
 
 ----------
 
+.. _com.hurence.logisland.processor.alerting.CheckAlerts: 
+
+CheckAlerts
+-----------
+Add one or more field with a default value
+
+Class
+_____
+com.hurence.logisland.processor.alerting.CheckAlerts
+
+Tags
+____
+record, alerting, thresholds, opc, tag
+
+Properties
+__________
+In the list below, the names of required properties appear in **bold**. Any other properties (not in bold) are considered optional. The table also indicates any default values
+.
+
+.. csv-table:: allowable-values
+   :header: "Name","Description","Allowable Values","Default Value","Sensitive","EL"
+   :widths: 20,60,30,20,10,10
+
+   "max.cpu.time", "maximum CPU time in milliseconds allowed for script execution.", "", "100", "", ""
+   "max.memory", "maximum memory in Bytes which JS executor thread can allocate", "", "51200", "", ""
+   "allow.no.brace", "Force, to check if all blocks are enclosed with curly braces "{}".
+<p>
+  Explanation: all loops (for, do-while, while, and if-else, and functions
+  should use braces, because poison_pill() function will be inserted after
+  each open brace "{", to ensure interruption checking. Otherwise simple
+  code like:
+  <pre>
+    while(true) while(true) {
+      // do nothing
+    }
+  </pre>
+  or even:
+  <pre>
+    while(true)
+  </pre>
+  cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
+  which make JVM unstable.
+</p>
+<p>
+  Properly writen code (even in bad intention) like:
+  <pre>
+    while(true) { while(true) {
+      // do nothing
+    }}
+  </pre>
+  will be changed into:
+  <pre>
+    while(true) {poison_pill(); 
+      while(true) {poison_pill();
+        // do nothing
+      }
+    }
+  </pre>
+  which finish nicely when interrupted.
+<p>
+  For legacy code, this check can be turned off, but with no guarantee, the
+  JS thread will gracefully finish when interrupted.
+</p>", "", "false", "", ""
+   "max.prepared.statements", "The size of prepared statements LRU cache. Default 0 (disabled).
+<p>
+  Each statements when {@link #setMaxCPUTime(long)} is set is prepared to
+  quit itself when time exceeded. To execute only once this procedure per
+  statement set this value.
+</p>
+<p>
+  When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
+</p>", "", "30", "", ""
+   "**datastore.client.service**", "The instance of the Controller Service to use for accessing datastore.", "", "null", "", ""
+   "datastore.cache.collection", "The collection where to find cached objects", "", "test", "", ""
+   "js.cache.service", "The cache service to be used to store already sanitized JS expressions. If not specified a in-memory unlimited hash map will be used.", "", "null", "", ""
+   "output.record.type", "the type of the output record", "", "event", "", ""
+   "profile.activation.condition", "A javascript expression that activates this alerting profile when true", "", "0==0", "", ""
+   "alert.criticity", "from 0 to ...", "", "0", "", ""
+
+Dynamic Properties
+__________________
+Dynamic Properties allow the user to specify both the name and value of a property.
+
+.. csv-table:: dynamic-properties
+   :header: "Name","Value","Description","EL"
+   :widths: 20,20,40,10
+
+   "field to add", "a default value", "Add a field to the record with the default value", ""
+
+----------
+
+.. _com.hurence.logisland.processor.alerting.CheckThresholds: 
+
+CheckThresholds
+---------------
+Compute threshold cross from given formulas.
+            each dynamic property will return a new record according to the formula definition
+            the record name will be set to the property name
+            the record time will be set to the current timestamp
+
+Class
+_____
+com.hurence.logisland.processor.alerting.CheckThresholds
+
+Tags
+____
+record, threshold, tag, alerting
+
+Properties
+__________
+In the list below, the names of required properties appear in **bold**. Any other properties (not in bold) are considered optional. The table also indicates any default values
+.
+
+.. csv-table:: allowable-values
+   :header: "Name","Description","Allowable Values","Default Value","Sensitive","EL"
+   :widths: 20,60,30,20,10,10
+
+   "max.cpu.time", "maximum CPU time in milliseconds allowed for script execution.", "", "100", "", ""
+   "max.memory", "maximum memory in Bytes which JS executor thread can allocate", "", "51200", "", ""
+   "allow.no.brace", "Force, to check if all blocks are enclosed with curly braces "{}".
+<p>
+  Explanation: all loops (for, do-while, while, and if-else, and functions
+  should use braces, because poison_pill() function will be inserted after
+  each open brace "{", to ensure interruption checking. Otherwise simple
+  code like:
+  <pre>
+    while(true) while(true) {
+      // do nothing
+    }
+  </pre>
+  or even:
+  <pre>
+    while(true)
+  </pre>
+  cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
+  which make JVM unstable.
+</p>
+<p>
+  Properly writen code (even in bad intention) like:
+  <pre>
+    while(true) { while(true) {
+      // do nothing
+    }}
+  </pre>
+  will be changed into:
+  <pre>
+    while(true) {poison_pill(); 
+      while(true) {poison_pill();
+        // do nothing
+      }
+    }
+  </pre>
+  which finish nicely when interrupted.
+<p>
+  For legacy code, this check can be turned off, but with no guarantee, the
+  JS thread will gracefully finish when interrupted.
+</p>", "", "false", "", ""
+   "max.prepared.statements", "The size of prepared statements LRU cache. Default 0 (disabled).
+<p>
+  Each statements when {@link #setMaxCPUTime(long)} is set is prepared to
+  quit itself when time exceeded. To execute only once this procedure per
+  statement set this value.
+</p>
+<p>
+  When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
+</p>", "", "30", "", ""
+   "**datastore.client.service**", "The instance of the Controller Service to use for accessing datastore.", "", "null", "", ""
+   "datastore.cache.collection", "The collection where to find cached objects", "", "test", "", ""
+   "js.cache.service", "The cache service to be used to store already sanitized JS expressions. If not specified a in-memory unlimited hash map will be used.", "", "null", "", ""
+   "output.record.type", "the type of the output record", "", "event", "", ""
+   "record.ttl", "How long (in ms) do the record will remain in cache", "", "30000", "", ""
+
+Dynamic Properties
+__________________
+Dynamic Properties allow the user to specify both the name and value of a property.
+
+.. csv-table:: dynamic-properties
+   :header: "Name","Value","Description","EL"
+   :widths: 20,20,40,10
+
+   "field to add", "a default value", "Add a field to the record with the default value", ""
+
+----------
+
+.. _com.hurence.logisland.processor.alerting.ComputeTags: 
+
+ComputeTags
+-----------
+Compute tag cross from given formulas.
+- each dynamic property will return a new record according to the formula definition
+- the record name will be set to the property name
+- the record time will be set to the current timestamp
+
+a threshold_cross has the following properties : count, sum, avg, time, duration, value
+
+Class
+_____
+com.hurence.logisland.processor.alerting.ComputeTags
+
+Tags
+____
+record, fields, Add
+
+Properties
+__________
+In the list below, the names of required properties appear in **bold**. Any other properties (not in bold) are considered optional. The table also indicates any default values
+.
+
+.. csv-table:: allowable-values
+   :header: "Name","Description","Allowable Values","Default Value","Sensitive","EL"
+   :widths: 20,60,30,20,10,10
+
+   "max.cpu.time", "maximum CPU time in milliseconds allowed for script execution.", "", "100", "", ""
+   "max.memory", "maximum memory in Bytes which JS executor thread can allocate", "", "51200", "", ""
+   "allow.no.brace", "Force, to check if all blocks are enclosed with curly braces "{}".
+<p>
+  Explanation: all loops (for, do-while, while, and if-else, and functions
+  should use braces, because poison_pill() function will be inserted after
+  each open brace "{", to ensure interruption checking. Otherwise simple
+  code like:
+  <pre>
+    while(true) while(true) {
+      // do nothing
+    }
+  </pre>
+  or even:
+  <pre>
+    while(true)
+  </pre>
+  cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
+  which make JVM unstable.
+</p>
+<p>
+  Properly writen code (even in bad intention) like:
+  <pre>
+    while(true) { while(true) {
+      // do nothing
+    }}
+  </pre>
+  will be changed into:
+  <pre>
+    while(true) {poison_pill(); 
+      while(true) {poison_pill();
+        // do nothing
+      }
+    }
+  </pre>
+  which finish nicely when interrupted.
+<p>
+  For legacy code, this check can be turned off, but with no guarantee, the
+  JS thread will gracefully finish when interrupted.
+</p>", "", "false", "", ""
+   "max.prepared.statements", "The size of prepared statements LRU cache. Default 0 (disabled).
+<p>
+  Each statements when {@link #setMaxCPUTime(long)} is set is prepared to
+  quit itself when time exceeded. To execute only once this procedure per
+  statement set this value.
+</p>
+<p>
+  When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
+</p>", "", "30", "", ""
+   "**datastore.client.service**", "The instance of the Controller Service to use for accessing datastore.", "", "null", "", ""
+   "datastore.cache.collection", "The collection where to find cached objects", "", "test", "", ""
+   "js.cache.service", "The cache service to be used to store already sanitized JS expressions. If not specified a in-memory unlimited hash map will be used.", "", "null", "", ""
+   "output.record.type", "the type of the output record", "", "event", "", ""
+
+Dynamic Properties
+__________________
+Dynamic Properties allow the user to specify both the name and value of a property.
+
+.. csv-table:: dynamic-properties
+   :header: "Name","Value","Description","EL"
+   :widths: 20,20,40,10
+
+   "field to add", "a default value", "Add a field to the record with the default value", ""
+
+----------
+
 .. _com.hurence.logisland.processor.webAnalytics.ConsolidateSession: 
 
 ConsolidateSession
@@ -244,6 +522,7 @@ In the list below, the names of required properties appear in **bold**. Any othe
    :widths: 20,60,30,20,10,10
 
    "**event.serializer**", "the way to serialize event", "Json serialization (serialize events as json blocs), String serialization (serialize events as toString() blocs)", "json", "", ""
+   "record.types", "comma separated list of record to include. all if empty", "", "", "", ""
 
 ----------
 
@@ -429,6 +708,38 @@ Dynamic Properties allow the user to specify both the name and value of a proper
 
 ----------
 
+.. _com.hurence.logisland.processor.excel.ExcelExtract: 
+
+ExcelExtract
+------------
+Consumes a Microsoft Excel document and converts each worksheet's line to a structured record. The processor is assuming to receive raw excel file as input record.
+
+Class
+_____
+com.hurence.logisland.processor.excel.ExcelExtract
+
+Tags
+____
+excel, processor, poi
+
+Properties
+__________
+In the list below, the names of required properties appear in **bold**. Any other properties (not in bold) are considered optional. The table also indicates any default values
+.
+
+.. csv-table:: allowable-values
+   :header: "Name","Description","Allowable Values","Default Value","Sensitive","EL"
+   :widths: 20,60,30,20,10,10
+
+   "Sheets to Extract", "Comma separated list of Excel document sheet names that should be extracted from the excel document. If this property is left blank then all of the sheets will be extracted from the Excel document. You can specify regular expressions. Any sheets not specified in this value will be ignored.", "", "", "", ""
+   "Columns To Skip", "Comma delimited list of column numbers to skip. Use the columns number and not the letter designation. Use this to skip over columns anywhere in your worksheet that you don't want extracted as part of the record.", "", "", "", ""
+   "Field names mapping", "The comma separated list representing the names of columns of extracted cells. Order matters! You should use either field.names either field.row.header but not both together.", "", "null", "", ""
+   "Number of Rows to Skip", "The row number of the first row to start processing.Use this to skip over rows of data at the top of your worksheet that are not part of the dataset.Empty rows of data anywhere in the spreadsheet will always be skipped, no matter what this value is set to.", "", "0", "", ""
+   "record.type", "Default type of record", "", "excel_record", "", ""
+   "Use a row header as field names mapping", "If set, field names mapping will be extracted from the specified row number. You should use either field.names either field.row.header but not both together.", "", "null", "", ""
+
+----------
+
 .. _com.hurence.logisland.processor.hbase.FetchHBaseRow: 
 
 FetchHBaseRow
@@ -487,6 +798,39 @@ In the list below, the names of required properties appear in **bold**. Any othe
 
    "**field.name**", "the field name", "", "record_id", "", ""
    "**field.value**", "the regex the field value must match to be kept", "", "null", "", ""
+
+----------
+
+.. _com.hurence.logisland.processor.FlatMap: 
+
+FlatMap
+-------
+Converts each field records into a single flatten record
+...
+
+Class
+_____
+com.hurence.logisland.processor.FlatMap
+
+Tags
+____
+record, fields, flatmap, flatten
+
+Properties
+__________
+In the list below, the names of required properties appear in **bold**. Any other properties (not in bold) are considered optional. The table also indicates any default values
+.
+
+.. csv-table:: allowable-values
+   :header: "Name","Description","Allowable Values","Default Value","Sensitive","EL"
+   :widths: 20,60,30,20,10,10
+
+   "keep.root.record", "do we add the original record in", "", "true", "", ""
+   "copy.root.record.fields", "do we copy the original record fields into the flattened records", "", "true", "", ""
+   "leaf.record.type", "the new type for the flattened records if present", "", "", "", ""
+   "concat.fields", "comma separated list of fields to apply concatenation ex : $rootField/$leaffield", "", "null", "", ""
+   "concat.separator", "returns $rootField/$leaf/field", "", "/", "", ""
+   "include.position", "do we add the original record position in", "", "true", "", ""
 
 ----------
 
@@ -730,7 +1074,7 @@ In the list below, the names of required properties appear in **bold**. Any othe
    :widths: 20,60,30,20,10,10
 
    "**id.generation.strategy**", "the strategy to generate new Id", "generate a random uid (generate a randomUid using java library), generate a hash from fields (generate a hash from fields), generate a string from java pattern and fields (generate a string from java pattern and fields), generate a concatenation of type, time and a hash from fields (generate a concatenation of type, time and a hash from fields (as for generate_hash strategy))", "randomUuid", "", ""
-   "**fields.to.hash**", "the comma separated list of field names (e.g. : 'policyid,date_raw'", "", "record_raw_value", "", ""
+   "**fields.to.hash**", "the comma separated list of field names (e.g. : 'policyid,date_raw'", "", "record_value", "", ""
    "**hash.charset**", "the charset to use to hash id string (e.g. 'UTF-8')", "", "UTF-8", "", ""
    "**hash.algorithm**", "the algorithme to use to hash id string (e.g. 'SHA-256'", "SHA-384, SHA-224, SHA-256, MD2, SHA, SHA-512, MD5", "SHA-256", "", ""
    "java.formatter.string", "the format to use to build id string (e.g. '%4$2s %3$2s %2$2s %1$2s' (see java Formatter)", "", "null", "", ""
@@ -854,7 +1198,7 @@ In the list below, the names of required properties appear in **bold**. Any othe
    :header: "Name","Description","Allowable Values","Default Value","Sensitive","EL"
    :widths: 20,60,30,20,10,10
 
-   "**conflict.resolution.policy**", "waht to do when a field with the same name already exists ?", "nothing to do (leave record as it was), overwrite existing field (if field already exist), keep only old field and delete the other (keep only old field and delete the other), keep old field and new one (creates an alias for the new field)", "do_nothing", "", ""
+   "**conflict.resolution.policy**", "what to do when a field with the same name already exists ?", "nothing to do (leave record as it was), overwrite existing field (if field already exist), keep only old field and delete the other (keep only old field and delete the other), keep old field and new one (creates an alias for the new field)", "do_nothing", "", ""
 
 Dynamic Properties
 __________________
@@ -1433,7 +1777,7 @@ In the list below, the names of required properties appear in **bold**. Any othe
    "**value.regex**", "the regex to match for the message value", "", "null", "", ""
    "**value.fields**", "a comma separated list of fields corresponding to matching groups for the message value", "", "null", "", ""
    "key.regex", "the regex to match for the message key", "", ".*", "", ""
-   "key.fields", "a comma separated list of fields corresponding to matching groups for the message key", "", "record_raw_key", "", ""
+   "key.fields", "a comma separated list of fields corresponding to matching groups for the message key", "", "record_key", "", ""
    "record.type", "default type of record", "", "record", "", ""
    "keep.raw.content", "do we add the initial raw content ?", "", "true", "", ""
    "timezone.record.time", "what is the time zone of the string formatted date for 'record_time' field.", "", "UTC", "", ""
@@ -1509,7 +1853,7 @@ In the list below, the names of required properties appear in **bold**. Any othe
    "**value.regex**", "the regex to match for the message value", "", "null", "", ""
    "**value.fields**", "a comma separated list of fields corresponding to matching groups for the message value", "", "null", "", ""
    "key.regex", "the regex to match for the message key", "", ".*", "", ""
-   "key.fields", "a comma separated list of fields corresponding to matching groups for the message key", "", "record_raw_key", "", ""
+   "key.fields", "a comma separated list of fields corresponding to matching groups for the message key", "", "record_key", "", ""
    "record.type", "default type of record", "", "record", "", ""
    "keep.raw.content", "do we add the initial raw content ?", "", "true", "", ""
    "**properties.field**", "the field containing the properties to split and treat", "", "properties", "", ""

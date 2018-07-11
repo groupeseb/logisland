@@ -20,8 +20,11 @@ import com.hurence.logisland.component.*;
 import com.hurence.logisland.controller.ControllerService;
 import com.hurence.logisland.controller.ControllerServiceLookup;
 import com.hurence.logisland.processor.ProcessException;
+import com.hurence.logisland.record.FieldDictionary;
 import com.hurence.logisland.record.Record;
+import com.hurence.logisland.record.StandardRecord;
 import com.hurence.logisland.registry.VariableRegistry;
+import com.hurence.logisland.util.FormatUtils;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -90,6 +93,11 @@ public class MockPropertyValue implements PropertyValue {
     }
 
     @Override
+    public Record asRecord() {
+        return (getRawValue() == null) ? null : new StandardRecord()
+                .setStringField(FieldDictionary.RECORD_VALUE,rawValue);
+    }
+    @Override
     public Long asLong() {
         ensureExpressionsEvaluated();
         return stdPropValue.asLong();
@@ -113,7 +121,10 @@ public class MockPropertyValue implements PropertyValue {
         return stdPropValue.asDouble();
     }
 
-
+    @Override
+    public Long asTimePeriod(final TimeUnit timeUnit) {
+        return (rawValue == null) ? null : FormatUtils.getTimeDuration(rawValue.trim(), timeUnit);
+    }
 
     private void markEvaluated() {
         if (Boolean.FALSE.equals(expectExpressions)) {

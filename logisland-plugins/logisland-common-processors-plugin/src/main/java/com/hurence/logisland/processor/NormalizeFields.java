@@ -38,8 +38,6 @@ import java.util.*;
 public class NormalizeFields extends AbstractProcessor {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(NormalizeFields.class);
-
 
     public static final AllowableValue DO_NOTHING =
             new AllowableValue("do_nothing", "nothing to do", "leave record as it was");
@@ -55,7 +53,7 @@ public class NormalizeFields extends AbstractProcessor {
 
     public static final PropertyDescriptor CONFLICT_RESOLUTION_POLICY = new PropertyDescriptor.Builder()
             .name("conflict.resolution.policy")
-            .description("waht to do when a field with the same name already exists ?")
+            .description("what to do when a field with the same name already exists ?")
             .required(true)
             .defaultValue(DO_NOTHING.getValue())
             .allowableValues(DO_NOTHING, OVERWRITE_EXISTING, KEEP_ONLY_OLD_FIELD, KEEP_BOTH_FIELDS)

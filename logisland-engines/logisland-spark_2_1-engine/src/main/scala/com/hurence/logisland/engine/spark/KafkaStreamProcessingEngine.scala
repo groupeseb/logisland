@@ -13,34 +13,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-/**
-  * Copyright (C) 2016 Hurence (bailet.thomas@gmail.com)
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  * http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+
 package com.hurence.logisland.engine.spark
 
 
 import java.util
 import java.util.Collections
 import java.util.regex.Pattern
+import java.util.stream.Collectors
 
-import com.hurence.logisland.component.{AllowableValue, PropertyDescriptor}
+import com.hurence.logisland.component.{AllowableValue, ComponentContext, PropertyDescriptor}
+import com.hurence.logisland.engine.spark.remote.PipelineConfigurationBroadcastWrapper
 import com.hurence.logisland.engine.{AbstractProcessingEngine, EngineContext}
-import com.hurence.logisland.stream.spark.KafkaRecordStream
+import com.hurence.logisland.stream.spark.{AbstractKafkaRecordStream, SparkRecordStream}
 import com.hurence.logisland.util.spark.SparkUtils
 import com.hurence.logisland.validator.StandardValidators
 import org.apache.spark.groupon.metrics.UserMetricsSystem
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
@@ -320,7 +309,90 @@ object KafkaStreamProcessingEngine {
 class KafkaStreamProcessingEngine extends AbstractProcessingEngine {
 
     private val logger = LoggerFactory.getLogger(classOf[KafkaStreamProcessingEngine])
+    private val conf = new SparkConf()
 
+
+    /**
+      * Provides subclasses the ability to perform initialization logic
+      */
+    override def init(context: ComponentContext): Unit = {
+        super.init(context)
+        val engineContext = context.asInstanceOf[EngineContext]
+        val sparkMaster = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_MASTER).asString
+        val appName = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_APP_NAME).asString
+        val batchDuration = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_STREAMING_BATCH_DURATION).asInteger().intValue()
+
+        /**
+          * job configuration
+          */
+
+
+        conf.setAppName(appName)
+        conf.setMaster(sparkMaster)
+
+        def setConfProperty(conf: SparkConf, engineContext: EngineContext, propertyDescriptor: PropertyDescriptor) = {
+
+            // Need to check if the properties are set because those properties are not "requires"
+            if (engineContext.getPropertyValue(propertyDescriptor).isSet) {
+                conf.set(propertyDescriptor.getName, engineContext.getPropertyValue(propertyDescriptor).asString)
+            }
+        }
+
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_UI_RETAINED_BATCHES)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_RECEIVER_WAL_ENABLE)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_KAFKA_MAXRETRIES)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_UI_PORT)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_UNPERSIST)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_BACKPRESSURE_ENABLED)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_BLOCK_INTERVAL)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_KAFKA_MAX_RATE_PER_PARTITION)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_SERIALIZER)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_DRIVER_MEMORY)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_EXECUTOR_MEMORY)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_DRIVER_CORES)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_EXECUTOR_CORES)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_EXECUTOR_INSTANCES)
+
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_MAX_APP_ATTEMPTS)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_AM_ATTEMPT_FAILURES_VALIDITY_INTERVAL)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_MAX_EXECUTOR_FAILURES)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_EXECUTOR_FAILURES_VALIDITY_INTERVAL)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_TASK_MAX_FAILURES)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_MEMORY_FRACTION)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_MEMORY_STORAGE_FRACTION)
+        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_SCHEDULER_MODE)
+
+        conf.set("spark.kryo.registrator", "com.hurence.logisland.util.spark.ProtoBufRegistrator")
+
+        if (sparkMaster startsWith "yarn") {
+            // Note that SPARK_YARN_DEPLOYMODE is not used by spark itself but only by spark-submit CLI
+            // That's why we do not need to propagate it here
+            setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_QUEUE)
+        }
+
+        @transient val sparkContext = getCurrentSparkContext()
+
+        SparkUtils.customizeLogLevels
+        UserMetricsSystem.initialize(sparkContext, "LogislandMetrics")
+
+        /**
+          * shutdown context gracefully
+          */
+        sys.ShutdownHookThread {
+            logger.info("Gracefully stopping Spark Streaming Application")
+            sparkContext.stop();
+            logger.info("Application stopped")
+        }
+
+
+        PipelineConfigurationBroadcastWrapper.getInstance().refresh(engineContext, sparkContext)
+
+
+        logger.info(s"spark context initialized with master:$sparkMaster, " +
+            s"appName:$appName, " +
+            s"batchDuration:$batchDuration ")
+        logger.info(s"conf : ${conf.toDebugString}")
+    }
 
     override def getSupportedPropertyDescriptors: util.List[PropertyDescriptor] = {
         val descriptors: util.List[PropertyDescriptor] = new util.ArrayList[PropertyDescriptor]
@@ -364,88 +436,31 @@ class KafkaStreamProcessingEngine extends AbstractProcessingEngine {
       */
     override def start(engineContext: EngineContext) = {
         logger.info("starting Spark Engine")
-        val timeout = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_STREAMING_TIMEOUT).asInteger().intValue()
         val streamingContext = createStreamingContext(engineContext)
-
-        /**
-          * shutdown context gracefully
-          */
-        sys.ShutdownHookThread {
-            logger.info("Gracefully stopping Spark Streaming Application")
-            streamingContext.stop(stopSparkContext = true, stopGracefully = true)
-            logger.info("Application stopped")
+        if (!engineContext.getStreamContexts.map(p=>p.getStream).filter(p=>p.isInstanceOf[AbstractKafkaRecordStream]).isEmpty) {
+            streamingContext.start()
         }
+    }
 
-        streamingContext.start()
+    protected def getCurrentSparkStreamingContext(sparkContext: SparkContext): StreamingContext = {
+        return StreamingContext.getActiveOrCreate(() =>
+            return new StreamingContext(sparkContext,
+                Milliseconds(sparkContext.getConf.get(KafkaStreamProcessingEngine.SPARK_STREAMING_BATCH_DURATION.getName,
+                    KafkaStreamProcessingEngine.SPARK_STREAMING_BATCH_DURATION.getDefaultValue).toInt))
+        )
+    }
 
-        if (timeout != -1) streamingContext.awaitTerminationOrTimeout(timeout)
-        else streamingContext.awaitTermination()
-
-        logger.info("stream processing done")
+    protected def getCurrentSparkContext(): SparkContext = {
+        return SparkContext.getOrCreate(conf)
     }
 
 
     def createStreamingContext(engineContext: EngineContext): StreamingContext = {
 
-        val sparkMaster = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_MASTER).asString
-        val appName = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_APP_NAME).asString
-        val batchDuration = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_STREAMING_BATCH_DURATION).asInteger().intValue()
 
-        /**
-          * job configuration
-          */
-        val conf = new SparkConf()
-
-        conf.setAppName(appName)
-        conf.setMaster(sparkMaster)
-
-        def setConfProperty(conf: SparkConf, engineContext: EngineContext, propertyDescriptor: PropertyDescriptor) = {
-
-            // Need to check if the properties are set because those properties are not "requires"
-            if (engineContext.getPropertyValue(propertyDescriptor).isSet) {
-                conf.set(propertyDescriptor.getName, engineContext.getPropertyValue(propertyDescriptor).asString)
-            }
-        }
-
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_UI_RETAINED_BATCHES)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_RECEIVER_WAL_ENABLE)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_KAFKA_MAXRETRIES)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_UI_PORT)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_UNPERSIST)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_BACKPRESSURE_ENABLED)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_BLOCK_INTERVAL)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_STREAMING_KAFKA_MAX_RATE_PER_PARTITION)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_SERIALIZER)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_DRIVER_MEMORY)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_EXECUTOR_MEMORY)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_DRIVER_CORES)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_EXECUTOR_CORES)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_EXECUTOR_INSTANCES)
-
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_MAX_APP_ATTEMPTS)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_AM_ATTEMPT_FAILURES_VALIDITY_INTERVAL)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_MAX_EXECUTOR_FAILURES)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_EXECUTOR_FAILURES_VALIDITY_INTERVAL)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_TASK_MAX_FAILURES)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_MEMORY_FRACTION)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_MEMORY_STORAGE_FRACTION)
-        setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_SCHEDULER_MODE)
-
-        if (sparkMaster startsWith "yarn") {
-            // Note that SPARK_YARN_DEPLOYMODE is not used by spark itself but only by spark-submit CLI
-            // That's why we do not need to propagate it here
-            setConfProperty(conf, engineContext, KafkaStreamProcessingEngine.SPARK_YARN_QUEUE)
-        }
-
-        SparkUtils.customizeLogLevels
-        @transient val sc = new SparkContext(conf)
-        @transient val ssc = new StreamingContext(sc, Milliseconds(batchDuration))
-        UserMetricsSystem.initialize(sc, "LogislandMetrics")
-
-        logger.info(s"spark context initialized with master:$sparkMaster, " +
-            s"appName:$appName, " +
-            s"batchDuration:$batchDuration ")
-        logger.info(s"conf : ${conf.toDebugString}")
+        @transient val sc = getCurrentSparkContext()
+        @transient val ssc = getCurrentSparkStreamingContext(sc)
+        val appName = sc.appName;
 
 
         /**
@@ -453,7 +468,8 @@ class KafkaStreamProcessingEngine extends AbstractProcessingEngine {
           */
         engineContext.getStreamContexts.foreach(streamingContext => {
             try {
-                val kafkaStream = streamingContext.getStream.asInstanceOf[KafkaRecordStream]
+                val kafkaStream = streamingContext.getStream.asInstanceOf[SparkRecordStream]
+
                 kafkaStream.setup(appName, ssc, streamingContext, engineContext)
                 kafkaStream.start()
             } catch {
@@ -467,19 +483,34 @@ class KafkaStreamProcessingEngine extends AbstractProcessingEngine {
 
 
     override def shutdown(engineContext: EngineContext) = {
-        logger.info(s"shuting down Spark engine")
+        logger.info(s"shutting down Spark engine")
+        stop(engineContext, true)
+
+    }
+
+    private def stop(engineContext: EngineContext, doStopSparkContext: Boolean) = {
         engineContext.getStreamContexts.foreach(streamingContext => {
             try {
 
-                val kafkaStream = streamingContext.getStream.asInstanceOf[KafkaRecordStream]
-                val sc = kafkaStream.getStreamContext();
-                sc.stop(stopSparkContext = true, stopGracefully = true)
+                val kafkaStream = streamingContext.getStream.asInstanceOf[SparkRecordStream]
                 kafkaStream.stop()
             } catch {
                 case ex: Exception =>
                     logger.error("something bad happened, please check Kafka or cluster health : {}", ex.getMessage)
             }
 
+            getCurrentSparkStreamingContext(getCurrentSparkContext())
+                .stop(stopSparkContext = doStopSparkContext, stopGracefully = true)
+
+
+        })
+        SparkSession.builder().getOrCreate().streams.active.foreach(streamingQuery=>{
+            try {
+                streamingQuery.stop()
+            } catch {
+                case ex: Exception =>
+                    logger.error("something bad while stopping a streaming query. Please check cluster health : {}", ex.getMessage)
+            }
         })
     }
 
@@ -489,6 +520,43 @@ class KafkaStreamProcessingEngine extends AbstractProcessingEngine {
         } value changed from $oldValue to $newValue")
     }
 
+    /**
+      * Await for termination.
+      *
+      */
+    override def awaitTermination(engineContext: EngineContext): Unit = {
+        var timeout = engineContext.getPropertyValue(KafkaStreamProcessingEngine.SPARK_STREAMING_TIMEOUT)
+            .asInteger().toInt
+        val sc = getCurrentSparkContext()
+
+        while (!sc.isStopped) {
+            try {
+                if (timeout < 0) {
+                    Thread.sleep(200)
+                } else {
+                    val toSleep = Math.min(200, timeout);
+                    Thread.sleep(toSleep)
+                    timeout -= toSleep
+                }
+            } catch {
+                case e: InterruptedException => return
+                case unknown: Throwable => throw unknown
+            }
+        }
+    }
+
+
+    /**
+      * Reset the engine by stopping the streaming context.
+      */
+    override def reset(engineContext: EngineContext): Unit = {
+        logger.info(s"Resetting engine ${
+            engineContext.getName
+        }")
+        stop(engineContext, false)
+        engineContext.getStreamContexts.clear()
+        engineContext.getControllerServiceConfigurations.clear()
+    }
+
+
 }
-
-

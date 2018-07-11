@@ -28,8 +28,10 @@ public class SerializerProvider {
     private static String JSON_SERIALIZER = JsonSerializer.class.getName();
     private static String KRYO_SERIALIZER = KryoSerializer.class.getName();
     private static String BYTES_ARRAY_SERIALIZER = BytesArraySerializer.class.getName();
+    private static String STRING_SERIALIZER = StringSerializer.class.getName();
     private static String NOOP_SERIALIZER = NoopSerializer.class.getName();
 
+    private static String KURA_PROTOBUF_SERIALIZER = KuraProtobufSerializer.class.getName();
     /**
      * build a serializer
      *
@@ -50,6 +52,10 @@ public class SerializerProvider {
                 return new KryoSerializer(true);
             } else if (inSerializerClass.equals(BYTES_ARRAY_SERIALIZER)) {
                 return new BytesArraySerializer();
+            } else if (inSerializerClass.equals(KURA_PROTOBUF_SERIALIZER)) {
+                return new KuraProtobufSerializer();
+            } else if (inSerializerClass.equals(STRING_SERIALIZER)) {
+                return new StringSerializer();
             } else {
                 return new NoopSerializer();
             }

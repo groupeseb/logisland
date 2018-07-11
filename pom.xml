@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hurence.logisland</groupId>
     <artifactId>logisland</artifactId>
-    <version>0.12.2</version>
+    <version>0.13.0</version>
     <packaging>pom</packaging>
     <description>LogIsland is an event mining platform based on Kafka to handle a huge amount of data in realtime.
     </description>
@@ -88,12 +88,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <inceptionYear>2014</inceptionYear>
-        <org.slf4j.version>1.7.12</org.slf4j.version>
+        <org.slf4j.version>1.7.16</org.slf4j.version>
         <logisland.version>${project.version}</logisland.version>
 
         <hadoop.version>2.7.1</hadoop.version>
         <hbase.version>1.1.2.2.4.0.0-169</hbase.version>
         <hadoop.guava.version>18.0</hadoop.guava.version>
+        <protobuf.version>2.5.0</protobuf.version>
         <hadoop.http.client.version>4.2.5</hadoop.http.client.version>
         <yammer.metrics.version>2.2.0</yammer.metrics.version>
         <algebird.version>0.12.0</algebird.version>
@@ -122,7 +123,7 @@
         </repository>
         <repository>
             <id>central</id>
-            <!-- This should be at top, it makes maven try the central repo 
+            <!-- This should be at top, it makes maven try the central repo
                 first and then others and hence faster dep resolution -->
             <name>Maven Repository</name>
             <url>https://repo1.maven.org/maven2</url>
@@ -173,6 +174,21 @@
             <id>confluent</id>
             <name>Confluent</name>
             <url>http://packages.confluent.io/maven/</url>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>openscada</id>
+            <url>http://neutronium.openscada.org/maven/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -355,45 +371,6 @@
             </dependency>
 
 
-            <!--
-                  Swagger & jax-rs stuff
-            -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-jersey2-jaxrs</artifactId>
-                <scope>compile</scope>
-                <version>${swagger-core-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${servlet-api-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.containers</groupId>
-                <artifactId>jersey-container-servlet-core</artifactId>
-                <version>${jersey2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-multipart</artifactId>
-                <version>${jersey2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.media</groupId>
-                <artifactId>jersey-media-json-jackson</artifactId>
-                <version>${jersey2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.ext</groupId>
-                <artifactId>jersey-proxy-client</artifactId>
-                <version>${jersey2-version}</version>
-            </dependency>
 
             <!--
             Confluent stuff
@@ -427,11 +404,7 @@
                 <version>1.3</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
+
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -453,6 +426,26 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>1.1</version>
@@ -461,6 +454,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${hadoop.guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
             </dependency>
 
 
@@ -513,6 +512,11 @@
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-streaming-kafka-0-10_${scala.binary.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql-kafka-0-10_${scala.binary.version}</artifactId>
                 <version>${spark.version}</version>
             </dependency>
             <dependency>
@@ -688,11 +692,6 @@
             </dependency>
             <dependency>
                 <groupId>com.hurence.logisland</groupId>
-                <artifactId>logisland-agent</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hurence.logisland</groupId>
                 <artifactId>logisland-elasticsearch-client-service-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -704,11 +703,6 @@
             <dependency>
                 <groupId>com.hurence.logisland</groupId>
                 <artifactId>logisland-hbase-client-service-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hurence.logisland</groupId>
-                <artifactId>logisland-elasticsearch_2_3_3-client-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -758,6 +752,16 @@
             </dependency>
             <dependency>
                 <groupId>com.hurence.logisland</groupId>
+                <artifactId>logisland-excel-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hurence.logisland</groupId>
+                <artifactId>logisland-redis_4-client-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hurence.logisland</groupId>
                 <artifactId>logisland-documentation</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -783,11 +787,7 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -1225,6 +1225,7 @@
         <profile>
             <id>hdp2.5</id>
             <activation>
+                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>hdp</name>
                     <value>2.5</value>
@@ -1238,13 +1239,35 @@
                 <jackson.version>2.6.6</jackson.version>
                 <hdp>2.5</hdp>
             </properties>
+            <modules>
+              <module>logisland-connect</module>
+            </modules>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.hurence.logisland</groupId>
+                        <artifactId>logisland-connect-spark</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.hurence.logisland</groupId>
+                        <artifactId>logisland-connector-opc</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.hurence.logisland</groupId>
+                        <artifactId>logisland-connectors-bundle</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
 
         <!--  hdp 2.4 -->
         <profile>
             <id>hdp2.4</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>hdp</name>
                     <value>2.4</value>
@@ -1296,7 +1319,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
                         </configuration>
                         <executions>
                             <execution>
@@ -1359,11 +1382,11 @@
             </build>
         </profile>
         <profile>
-            <!-- Checks style and licensing requirements. This is a good idea to run 
-            for contributions and for the release process. While it would be nice to 
-            run always these plugins can considerably slow the build and have proven 
-            to create unstable builds in our multi-module project and when building using 
-            multiple threads. The stability issues seen with Checkstyle in multi-module 
+            <!-- Checks style and licensing requirements. This is a good idea to run
+            for contributions and for the release process. While it would be nice to
+            run always these plugins can considerably slow the build and have proven
+            to create unstable builds in our multi-module project and when building using
+            multiple threads. The stability issues seen with Checkstyle in multi-module
             builds include false-positives and false negatives. -->
             <id>contrib-check</id>
             <build>
