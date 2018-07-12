@@ -13,8 +13,8 @@ node {
     def ansible_credentials_id = '6d61644b-e985-45b3-8344-6c44af8143d6'
     def ansible_inventory = '${WORKSPACE_ANSIBLE}/inventory-${ENVIRONNEMENT}'
     def ansible_playbook = '${WORKSPACE_ANSIBLE}/playbook-deploy-logisland.yml'
-    def docker_image = 'groupeseb/logisland-hdp2.5'
-    def env_proxy = '${ENV_PROXY}'
+    def docker_image = 'groupeseb/logisland'
+    def env_proxy = '${PROXY}'
 
     stage('Show variables') {
         echo sh(script: 'env|sort', returnStdout: true)
