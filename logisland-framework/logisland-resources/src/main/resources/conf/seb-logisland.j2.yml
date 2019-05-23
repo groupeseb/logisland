@@ -14,9 +14,9 @@ engine:
   configuration:
     spark.app.name: Events
     spark.master: local[4]
-    spark.driver.memory: 1G
+    spark.driver.memory: 2G
     spark.driver.cores: 1
-    spark.executor.memory: 2G
+    spark.executor.memory: 4G
     spark.executor.instances: 4
     spark.executor.cores: 2
     spark.yarn.queue: default
