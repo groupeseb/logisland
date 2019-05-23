@@ -95,22 +95,17 @@
     <logger name="parquet.hadoop" level="WARN"/>
 
 
-
-
-
-
-
-    <logger name="org.apache.logisland" level="INFO"/>
-    <logger name="org.apache.logisland.controller.repository.StandardProcessSession" level="WARN" />
+    <logger name="org.apache.logisland" level="DEBUG"/>
+    <logger name="org.apache.logisland.controller.repository.StandardProcessSession" level="DEBUG" />
     
     <!-- Logger for managing logging statements for logisland clusters. -->
-    <logger name="org.apache.logisland.cluster" level="INFO"/>
+    <logger name="org.apache.logisland.cluster" level="DEBUG"/>
 
     <!-- Logger for logging HTTP requests received by the web server. -->
-    <logger name="org.apache.logisland.server.JettyServer" level="INFO"/>
+    <logger name="org.apache.logisland.server.JettyServer" level="DEBUG"/>
 
     <!-- Logger for managing logging statements for jetty -->
-    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="org.eclipse.jetty" level="DEBUG"/>
 
     <!-- Suppress non-error messages due to excessive logging by class or library -->
     <logger name="com.sun.jersey.spi.container.servlet.WebComponent" level="ERROR"/>

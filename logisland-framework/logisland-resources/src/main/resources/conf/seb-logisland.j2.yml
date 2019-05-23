@@ -84,25 +84,6 @@ engine:
             value.regex: '(?=.*"ssid":"([^"]*)".*)?(?=.*"platform":"([^"]*)".*)?(?=.*"anonymousid":"([^"]*)".*)?(?=.*"userid":"([^"]*)".*)?(?=.*"type":"([^"]*)".*)?(?=.*,"date":"([^"]*)",.*)?(?=.*"application_name":"([^"]*)".*)?(?=.*"application_version":"([^"]*)".*)?(?=.*"libVersion":"([^"]*)".*)?(?=.*"model":"([^"]*)".*)?(?=.*"os_version":"([^"]*)".*)?(?=.*"params":\[([^\]]*)\].*)?(?=.*"context":(\{[^\}]*\}).*)?(?=.*"application_lang_market":"([^"]*)".*)?(?=.*"rcuid":"([^"]*)".*)?(?=.*"application_market":"([^"]*)".*)?(?=.*"application_lang":"([^"]*)".*)?.*'
             value.fields: event_ssid,event_platform,event_anonymousid,event_userid,event_type,event_date,event_application_name,event_application_version,event_libVersion,event_model,event_os_version,event_params,event_context,event_application_langMarket,event_rcuid,event_application_market,event_application_lang
 
-#        - processor: CookeoEventsParser
-#          component: com.hurence.logisland.processor.EvaluateJsonPath
-#          type: parser
-#          configuration:
-#            event_ssid: $.ssid
-#            event_platform: $.context.platform
-#            event_anonymousid: $.user.anonymousid
-#            event_userid: $.user.userid
-#            event_type: $.type
-#            event_date: $.date
-#            event_application_name: $.context.application_name
-#            event_application_version: $.context.application_version
-#            event_libVersion: $.libVersion
-#            event_model: $.context.model
-#            event_os_version: $.context.os_version
-#            event_params: $.params
-#            event_context: $.context
-#            event_application_langMarket: $.context.application_lang_market
-
         - processor: FilterRecordsSSID
           component: com.hurence.logisland.processor.FilterRecords
           type: processor
@@ -116,8 +97,7 @@ engine:
 #          configuration:
 #            field.name: event_type
 #            field.value: (?:MOBILEPAGELOAD|BAKING)
-#
-#
+
         - processor: EnrichRecordsElasticsearch
           component: com.hurence.logisland.processor.EnrichRecordsElasticSearch
           type: processor
@@ -126,8 +106,7 @@ engine:
             record.key: event_rcuid
             es.index: profile_ucr
             es.type: profile_ucr_type
-
-
+            es.includes.field: firstname
 
 
        # Bulk add to elasticsearch
