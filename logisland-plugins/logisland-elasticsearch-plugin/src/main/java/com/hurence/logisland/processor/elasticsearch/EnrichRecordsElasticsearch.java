@@ -125,6 +125,7 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
         List<Triple<Record,String, IncludeFields>> recordsToEnrich = new ArrayList<>();
 
         if (records.size() != 0) {
+            logger.debug("There is at least one record");
             String excludesFieldName = context.getPropertyValue(ES_EXCLUDES_FIELD).asString();
 
             // Excludes :
@@ -143,6 +144,8 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
 
             for (Record record : records) {
 
+                logger.debug("New record");
+
                 String recordKeyName = null;
                 String indexName = null;
                 String typeName = null;
@@ -153,6 +156,7 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
                     indexName = context.getPropertyValue(ES_INDEX_FIELD).evaluate(record).asString();
                     typeName = context.getPropertyValue(ES_TYPE_FIELD).evaluate(record).asString();
                     includesFieldName = context.getPropertyValue(ES_INCLUDES_FIELD).evaluate(record).asString();
+                    logger.debug("New record informations: recordKeyName="+ recordKeyName+", indexName="+indexName+", typeName="+typeName+", includesFieldName="+includesFieldName);
                 } catch (Throwable t) {
                     record.setStringField(FieldDictionary.RECORD_ERRORS, "Failure in executing EL. Error: " + t.getMessage());
                     logger.error("Cannot interpret EL : " + record, t);
@@ -160,6 +164,7 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
 
                 if (recordKeyName != null) {
                     try {
+                        logger.debug("Try to enrich");
                         // Includes :
                         String[] includesArray = null;
                         if ((includesFieldName != null) && (!includesFieldName.isEmpty())) {
@@ -169,10 +174,12 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
                         mgqrBuilder.add(indexName, typeName, includeFields.getAttrsToIncludeArray(), recordKeyName);
                         recordsToEnrich.add(new ImmutableTriple(record, asUniqueKey(indexName, typeName, recordKeyName), includeFields));
                     } catch (Throwable t) {
+                        logger.debug("Can not request ElasticSearch with " + indexName + " "  + typeName + " " + recordKeyName);
                         record.setStringField(FieldDictionary.RECORD_ERRORS, "Can not request ElasticSearch with " + indexName + " "  + typeName + " " + recordKeyName);
                         outputRecords.add(record);
                     }
                 } else {
+                    logger.debug("Record Key Name is null");
                     //record.setStringField(FieldDictionary.RECORD_ERRORS, "Interpreted EL returned null for recordKeyName");
                     outputRecords.add(record);
                     //logger.error("Interpreted EL returned null for recordKeyName");
@@ -200,6 +207,7 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
                     collect(Collectors.toMap(EnrichRecordsElasticsearch::asUniqueKey, Function.identity()));
 
             recordsToEnrich.forEach(recordToEnrich -> {
+                logger.debug("For each record to enrich");
 
                 Triple<Record, String, IncludeFields> triple = recordToEnrich;
                 Record outputRecord = triple.getLeft();
@@ -212,6 +220,7 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
                 if ((responseRecord != null) && (responseRecord.getRetrievedFields() != null)) {
                     // Retrieve the fields from responseRecord that matches the ones in the recordToEnrich.
                     responseRecord.getRetrievedFields().forEach((k, v) -> {
+                        logger.debug("ResponseRecord getRetrievedFields: "+k+", "+v);
                         String fieldName = k.toString();
                         if (includeFields.includes(fieldName)) {
                             // Now check if there is an attribute mapping rule to apply
@@ -236,6 +245,7 @@ public class EnrichRecordsElasticsearch extends AbstractElasticsearchProcessor {
      * Returns true if the array of attributes to include contains at least one attribute mapping
      */
     private boolean hasAttributeMapping(String[] includesArray){
+        logger.debug("hasAttributeMapping");
         boolean attrMapping = false;
         for (String includePattern : includesArray){
             if (includePattern.contains(":")){
