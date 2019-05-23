@@ -1221,6 +1221,26 @@
 
     <profiles>
 
+        <!--  hdp 2.5 -->
+        <profile>
+            <id>hdp2.5</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>hdp</name>
+                    <value>2.5</value>
+                </property>
+            </activation>
+            <properties>
+                <spark.version>2.1.0</spark.version>
+                <kafka.version>0.10.0.1</kafka.version>
+                <scala.version>2.11.8</scala.version>
+                <scala.binary.version>2.11</scala.binary.version>
+                <jackson.version>2.6.6</jackson.version>
+                <hdp>2.5</hdp>
+            </properties>
+
+        </profile>
 
         <!--  hdp 2.4 -->
         <profile>
