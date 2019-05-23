@@ -118,14 +118,14 @@ engine:
 #            field.value: (?:MOBILEPAGELOAD|BAKING)
 #
 #
-#        - processor: EnrichRecordsElasticsearch
-#          component: com.hurence.logisland.processor.EnrichRecordsElasticSearch
-#          type: processor
-#          configuration:
-#            elasticsearch.client.service: ElasticsearchService
-#            record.key: event_rcuid
-#            es.index: profile_ucr
-#            es.type: profile_ucr_type
+        - processor: EnrichRecordsElasticsearch
+          component: com.hurence.logisland.processor.EnrichRecordsElasticSearch
+          type: processor
+          configuration:
+            elasticsearch.client.service: ElasticsearchService
+            record.key: event_rcuid
+            es.index: profile_ucr
+            es.type: profile_ucr_type
 
 
 
