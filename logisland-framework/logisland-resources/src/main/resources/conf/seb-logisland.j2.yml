@@ -99,7 +99,7 @@ engine:
 #            field.value: (?:MOBILEPAGELOAD|BAKING)
 
         - processor: EnrichRecordsElasticsearch
-          component: com.hurence.logisland.processor.EnrichRecordsElasticSearch
+          component: com.hurence.logisland.processor.elasticsearch.EnrichRecordsElasticSearch
           type: processor
           configuration:
             elasticsearch.client.service: ElasticsearchService
