@@ -75,14 +75,14 @@ engine:
         kafka.manual.offset.reset: latest
       processorConfigurations:
 
-#        - processor: CookeoEventsParser
-#          component: com.hurence.logisland.processor.SplitText
-#          type: parser
-#          configuration:
-#            record.type: mobile_event
-#            # if using only lookarounds, end with .* to capture all field and populate record_raw_value
-#            value.regex: '(?=.*"ssid":"([^"]*)".*)?(?=.*"platform":"([^"]*)".*)?(?=.*"anonymousid":"([^"]*)".*)?(?=.*"userid":"([^"]*)".*)?(?=.*"type":"([^"]*)".*)?(?=.*,"date":"([^"]*)",.*)?(?=.*"application_name":"([^"]*)".*)?(?=.*"application_version":"([^"]*)".*)?(?=.*"libVersion":"([^"]*)".*)?(?=.*"model":"([^"]*)".*)?(?=.*"os_version":"([^"]*)".*)?(?=.*"params":\[([^\]]*)\].*)?(?=.*"context":(\{[^\}]*\}).*)?(?=.*"application_lang_market":"([^"]*)".*)?(?=.*"rcuid":"([^"]*)".*)?(?=.*"application_market":"([^"]*)".*)?(?=.*"application_lang":"([^"]*)".*)?.*'
-#            value.fields: event_ssid,event_platform,event_anonymousid,event_userid,event_type,event_date,event_application_name,event_application_version,event_libVersion,event_model,event_os_version,event_params,event_context,event_application_langMarket,event_rcuid,event_application_market,event_application_lang
+        - processor: CookeoEventsParser
+          component: com.hurence.logisland.processor.SplitText
+          type: parser
+          configuration:
+            record.type: mobile_event
+            # if using only lookarounds, end with .* to capture all field and populate record_raw_value
+            value.regex: '(?=.*"ssid":"([^"]*)".*)?(?=.*"platform":"([^"]*)".*)?(?=.*"anonymousid":"([^"]*)".*)?(?=.*"userid":"([^"]*)".*)?(?=.*"type":"([^"]*)".*)?(?=.*,"date":"([^"]*)",.*)?(?=.*"application_name":"([^"]*)".*)?(?=.*"application_version":"([^"]*)".*)?(?=.*"libVersion":"([^"]*)".*)?(?=.*"model":"([^"]*)".*)?(?=.*"os_version":"([^"]*)".*)?(?=.*"params":\[([^\]]*)\].*)?(?=.*"context":(\{[^\}]*\}).*)?(?=.*"application_lang_market":"([^"]*)".*)?(?=.*"rcuid":"([^"]*)".*)?(?=.*"application_market":"([^"]*)".*)?(?=.*"application_lang":"([^"]*)".*)?.*'
+            value.fields: event_ssid,event_platform,event_anonymousid,event_userid,event_type,event_date,event_application_name,event_application_version,event_libVersion,event_model,event_os_version,event_params,event_context,event_application_langMarket,event_rcuid,event_application_market,event_application_lang
 
 #        - processor: CookeoEventsParser
 #          component: com.hurence.logisland.processor.EvaluateJsonPath
@@ -103,12 +103,12 @@ engine:
 #            event_context: $.context
 #            event_application_langMarket: $.context.application_lang_market
 
-#        - processor: FilterRecordsSSID
-#          component: com.hurence.logisland.processor.FilterRecords
-#          type: processor
-#          configuration:
-#            field.name: event_ssid
-#            field.value: (?!tefal)(?!rowenta)(?!t-fal)(?!krups\.)(?!moulinex).*
+        - processor: FilterRecordsSSID
+          component: com.hurence.logisland.processor.FilterRecords
+          type: processor
+          configuration:
+            field.name: event_ssid
+            field.value: (?!tefal)(?!rowenta)(?!t-fal)(?!krups\.)(?!moulinex).*
 
 #        - processor: FilterRecordsEvent
 #          component: com.hurence.logisland.processor.FilterRecords
