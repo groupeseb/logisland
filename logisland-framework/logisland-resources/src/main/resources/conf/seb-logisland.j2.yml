@@ -45,7 +45,6 @@ engine:
       type: service
       documentation: elasticsearch service
       configuration:
-#        hosts: sandbox:9300
         hosts: elasticsearch:9300
         cluster.name: es-logisland
         batch.size: 5000
@@ -53,9 +52,9 @@ engine:
   # Stream configs
   streamConfigurations:
 
-
-    # parsing
-    - stream: CookeoStream
+#########################################################################################################
+# AppsEvents
+    - stream: AppsEvents
       component: com.hurence.logisland.stream.spark.KafkaSEBEventStreamParallelProcessing
       type: stream
       documentation: a processor that converts raw apache logs into structured log records
@@ -75,7 +74,7 @@ engine:
         kafka.manual.offset.reset: latest
       processorConfigurations:
 
-        - processor: CookeoEventsParser
+        - processor: AppsEventsParser
           component: com.hurence.logisland.processor.SplitText
           type: parser
           configuration:
@@ -91,22 +90,17 @@ engine:
             field.name: event_ssid
             field.value: (?!tefal)(?!rowenta)(?!t-fal)(?!krups\.)(?!moulinex).*
 
-#        - processor: FilterRecordsEvent
-#          component: com.hurence.logisland.processor.FilterRecords
+
+#       THIS PROCESSOR IS NOT WORKING - no logs
+#        - processor: EnrichUCR
+#          component: com.hurence.logisland.processor.elasticsearch.EnrichRecordsElasticsearch
 #          type: processor
 #          configuration:
-#            field.name: event_type
-#            field.value: (?:MOBILEPAGELOAD|BAKING)
-
-        - processor: EnrichUCR
-          component: com.hurence.logisland.processor.elasticsearch.EnrichRecordsElasticsearch
-          type: processor
-          configuration:
-            elasticsearch.client.service: ElasticsearchService
-            record.key: event_rcuid
-            es.index: profile_ucr
-            es.type: profile_ucr_type
-            es.includes.field: firstname
+#            elasticsearch.client.service: ElasticsearchService
+#            record.key: event_rcuid
+#            es.index: profile_ucr
+#            es.type: profile_ucr_type
+#            es.includes.field: firstname
 
 
        # Bulk add to elasticsearch
