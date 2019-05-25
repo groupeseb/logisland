@@ -119,7 +119,7 @@ engine:
 #########################################################################################################
 # IPC2019
     - stream: IPC2019
-      component: com.hurence.logisland.stream.spark.KafkaSEBEventStreamParallelProcessing
+      component: com.hurence.logisland.stream.spark.KafkaRecordStreamParallelProcessing
       type: stream
       documentation: a processor that converts raw apache logs into structured log records
       configuration:
